@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Service extends Model
@@ -29,13 +30,13 @@ class Service extends Model
         return $this->belongsTo(Cabang::class, 'id_cabang');
     }
 
-    public function typeservice()
+    public function typeService()
     {
         return $this->belongsTo(TypeService::class, 'id_tipe_service');
     }
 
     public function pengguna()
     {
-        return $this->belongsTo(Pengguna::class, 'id_pengguna');
+        return $this->belongsTo(Pengguna::class, 'id_pengguna', 'id_pengguna');
     }
 }

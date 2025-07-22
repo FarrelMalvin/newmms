@@ -19,6 +19,10 @@ class DatabaseSeeder extends Seeder
             ServiceSeeder::class, // Tambahkan ServiceSeeder
             TestimoniSeeder::class, // Tambahkan TestimoniSeeder
             ProdukSeeder::class, // Tambahkan ProdukSeeder
+<<<<<<< HEAD
+
+=======
+>>>>>>> 885471175fa0715ebbfa0816a9c109590157b94f
         ]);
         \App\Models\Pengguna::create([
             'nama' => 'Admin Satu',

@@ -7,6 +7,7 @@ use App\Models\Produk;
 use App\Models\Service;
 use App\Models\Testimoni;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AdminDashboardController extends Controller
 {
@@ -27,6 +28,7 @@ class AdminDashboardController extends Controller
         
         // Get recent services/bookings
         $recentServices = Service::with('pengguna')
+            ->where('id_cabang', Auth::user()->adminDetail->id_cabang)
             ->orderBy('id_service', 'desc')
             ->get();
         

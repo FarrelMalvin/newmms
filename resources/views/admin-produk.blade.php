@@ -106,9 +106,10 @@
                         </select>
                         <select name="filterCategory" id="filterCategory" class="filter-select">
                             <option value="">All Categories</option>
-                            <option value="electronics">Electronics</option>
-                            <option value="accessories">Accessories</option>
-                            <option value="services">Services</option>
+                            <option value="Oil">Oil</option>
+                            <option value="Second Part">Second Part</option>
+                            <option value="New Part">New Part</option>
+                            <option value="Apparel">Apparel</option>
                         </select>
                         <button class="btn btn-primary" onclick="showAddModal()">Add Product</button>
                     </div>
@@ -198,10 +199,11 @@
                 <div class="form-group">
                     <label for="kategori">Category</label>
                     <select id="kategori" name="kategori" required>
-                        <option value="">Select Category</option>
-                        <option value="electronics">Electronics</option>
-                        <option value="accessories">Accessories</option>
-                        <option value="services">Services</option>
+                         <option value="">Select Categories</option>
+                            <option value="Oil">Oil</option>
+                            <option value="Second Part">Second Part</option>
+                            <option value="New Part">New Part</option>
+                            <option value="Apparel">Apparel</option>
                     </select>
                 </div>
                 <div class="form-group">

@@ -21,7 +21,6 @@
             <nav class="nav-menu">
                 <a href="/admin/dashboard" class="nav-item">
                     <span>Home</span>
-                    <img class="chevron-right" src="/images/chevron-right.png" alt="">
                 </a>
                 <a href="/admin/testimoni" class="nav-item">
                     <span>Testimonials</span>
@@ -33,13 +32,13 @@
                     <span>Booking</span>
                 </a>
                 <a href="/admin/berita" class="nav-item active">
+                    <img class="chevron-right" src="/images/chevron-right.png" alt="">
                     <span>News</span>
                 </a>
             </nav>
             
             <div class="logout-section">
                 <button onclick="performLogout()" class="logout-btn" style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; color: inherit; text-decoration: none; width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: background-color 0.2s;">
-                    <span class="nav-icon">🚪</span>
                     <span>Log Out</span>
                 </button>
             </div>

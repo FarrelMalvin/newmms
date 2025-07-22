@@ -35,7 +35,7 @@ class LoginController extends Controller
         $user = Pengguna::with('adminDetail')->find($user->id_pengguna); 
         
         if ($user->peran === 'cust') {
-            return redirect('/'); // Redirect ke halaman welcome
+            return redirect('/customer/dashboard'); // Fixed redirect path
         } elseif ($user->peran === 'admin') {
             $idCabang = $user->adminDetail?->id_cabang;
             Log::info('Login berhasil', ['id_cabang' => $idCabang]);
@@ -50,32 +50,25 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
+
         $user = Auth::user();
 
-        // Log the logout before destroying session
-        Log::info('User logged out', [
-            'user_id' => $user?->id_pengguna,
-            'username' => $user?->username
-        ]);
-
-        // Clear all session data
         Auth::logout();
-        $request->session()->flush();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        
-        // Clear any cached user data
-        if ($user) {
-            cache()->forget('user_' . $user->id_pengguna);
-        }
+        // Log the logout
+        Log::info('User logged out', [
+        'user_id' => $user?->id_pengguna,
+        'username' => $user?->username
+    ]);
     
-        // Return appropriate response
-        if ($request->expectsJson()) {
-            return response()->json(['message' => 'Logout berhasil']);
-        }
+    // Return appropriate response
+    if ($request->expectsJson()) {
+        return response()->json(['message' => 'Logout berhasil']);
+    }
     
-        // Redirect to home page with success message
-        return redirect('/')->with('success', 'Logout berhasil');
+    return redirect('/login')->with('success', 'Logout berhasil');
+
     }
 
     public function showLoginForm()

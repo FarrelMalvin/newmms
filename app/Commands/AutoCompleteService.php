@@ -15,7 +15,7 @@ class AutoCompleteService
 
             $services = Service::where('status', 'pros')
                 ->whereNotNull('started_at')
-                ->where('started_at', '<=', $now->subHours(2))
+                ->where('started_at', '<=', $now->subSeconds(10)) // Changed to 10 seconds
                 ->get();
                 
             Log::info('[Scheduler] Ditemukan ' . $services->count() . ' service untuk diubah');
@@ -23,7 +23,11 @@ class AutoCompleteService
                 $service->status = 'fin';
                 $service->finished_at = $now;
                 $service->save();
+                
+                Log::info("[Scheduler] Service ID {$service->id_service} completed automatically");
             }
-        })->everyTenMinutes();
+        })->everySecond()
+          ->withoutOverlapping()
+          ->runInBackground();
     }
 }

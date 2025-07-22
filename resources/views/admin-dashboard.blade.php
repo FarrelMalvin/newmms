@@ -39,10 +39,9 @@
             </nav>
             
             <div class="logout-section">
-                <button onclick="performLogout()" class="logout-btn" style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; color: inherit; text-decoration: none; width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: background-color 0.2s;">
-                    <span class="nav-icon">🚪</span>
+                <a href="/logout" class="logout-btn">
                     <span>Log Out</span>
-                </button>
+                </a>
             </div>
         </div>
         
@@ -152,13 +151,15 @@
                             <img src="https://ui-avatars.com/api/?name={{ Auth::user()->nama }}&background=eeeeee&color=141414&size=128" alt="Profile" class="header-profile">
                             <div class="booking-content">
                                 <div class="booking-name">{{ $service->pengguna->nama ?? 'Anonymous' }}</div>
-                                <div class="booking-service">{{ $service->type_service ?? 'Service' }} - {{ $service->tanggal_booking ?? 'No Date' }}</div>
+                                <div class="booking-service">{{ $service->type_service ?? 'Service' }} - {{ $service->tanggal ?? 'No Date' }}</div>
                                 @switch($service->status)
                                     @case('fin')
                                         <span class="status-badge finished">Finished</span>
                                         @break
                                     @case('pros')
                                         <span class="status-badge ongoing">In Progress</span>
+                                    @case('cancel')
+                                        <span class="status-badge cancelled">Cancelled</span>
                                         @break
                                     @default
                                         <span class="status-badge draft">Pending</span>
@@ -404,7 +405,7 @@
     });
 
         function deleteProduct(id) {
-            if (confirm('Are you sure you want to delete this product?')) {
+            if (confirm('Apakah Anda yakin ingin menghapus produk?')) {
                 fetch(`/admin/api/produk/${id}`, {
                     method: 'DELETE',
                     headers: {
@@ -423,28 +424,9 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error deleting product');
+                    alert('Error menghapus produk');
                 });
             }
-        }
-
-        // Logout function
-        function performLogout() {
-            // Create a form dynamically
-            var form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '{{ route("logout") }}';
-            
-            // Add CSRF token
-            var csrfToken = document.createElement('input');
-            csrfToken.type = 'hidden';
-            csrfToken.name = '_token';
-            csrfToken.value = '{{ csrf_token() }}';
-            form.appendChild(csrfToken);
-            
-            // Submit the form
-            document.body.appendChild(form);
-            form.submit();
         }
     </script>
 </body>

@@ -10,7 +10,7 @@ class Pengguna extends Authenticatable
     protected $primaryKey = 'id_pengguna';
     public $timestamps = false;
     protected $fillable = [
-        'nama', 'username', 'no_hp', 'password', 'peran'
+        'nama', 'username', 'password', 'peran', 'no_hp'
     ];
 
     protected $hidden = [
@@ -20,6 +20,10 @@ class Pengguna extends Authenticatable
     public function adminDetail()
     {
         return $this->hasOne(PenggunaAdmin::class, 'id_pengguna', 'id_pengguna');
+    }
+
+    public function service() {
+        return $this->hasMany(Service::class, 'id_pengguna', 'id_pengguna');
     }
 
 } 
