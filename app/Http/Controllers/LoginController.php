@@ -35,7 +35,7 @@ class LoginController extends Controller
         $user = Pengguna::with('adminDetail')->find($user->id_pengguna); 
         
         if ($user->peran === 'cust') {
-            return redirect('/customer/dashboard'); // Fixed redirect path
+            return redirect('/');
         } elseif ($user->peran === 'admin') {
             $idCabang = $user->adminDetail?->id_cabang;
             Log::info('Login berhasil', ['id_cabang' => $idCabang]);

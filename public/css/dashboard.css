@@ -443,12 +443,17 @@ nav a:hover {
     background: var(--orange);
     color: var(--white);
     border: none;
-    padding: 8px 18px;
+    padding: 14px 32px;
     border-radius: 6px;
-    font-size: 0.97rem;
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     transition: background 0.2s;
+    width: 100%;
+    margin-top: 8px;
+    margin-bottom: 0;
+    display: block;
+    text-align: center;
 }
 .collection-card .info .btn:hover {
     background: #d96f00;
@@ -953,4 +958,279 @@ footer {
         width: 30px;
         height: 30px;
     }
+}
+
+/* === RESPONSIVE: Tambahan media queries untuk mobile === */
+@media (max-width: 600px) {
+  header, .header-left, .header-right {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    height: auto !important;
+    min-height: unset !important;
+  }
+  nav {
+    flex-direction: column;
+    gap: 16px;
+    margin-right: 0;
+    width: 100%;
+  }
+  .hero {
+    flex-direction: column;
+    min-height: 320px;
+    height: auto;
+    padding: 0 0 24px 0;
+  }
+  .hero-left, .hero-right {
+    flex: 1 1 100%;
+    padding: 24px 10px !important;
+    min-width: 0;
+    max-width: 100vw;
+  }
+  .hero-title {
+    font-size: 1.5rem;
+  }
+  .section, .about-content, .services-section, .collection-section, .testimonial-section {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+  .services {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    align-items: stretch !important;
+  }
+  .service-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100vw !important;
+    height: auto !important;
+  }
+  .collections {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    align-items: stretch !important;
+  }
+  .collection-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100vw !important;
+  }
+  .testimonial-cards-wrapper {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    align-items: stretch !important;
+  }
+  .testimonial-card-custom {
+    min-width: 0 !important;
+    max-width: 100vw !important;
+  }
+}
+
+/* === RESPONSIVE: Perbaikan layout mobile agar tetap mirip desktop === */
+@media (max-width: 900px) {
+  .collections {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1.2rem !important;
+    justify-content: center !important;
+    align-items: stretch !important;
+    padding: 0 0.5rem !important;
+  }
+  .collection-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100vw !important;
+    margin: 0 auto !important;
+  }
+  .card-content h3 {
+    font-size: 1.1rem !important;
+  }
+  .card-content {
+    padding: 1rem 0.7rem 0.5rem 0.7rem !important;
+  }
+  .hero-title {
+    font-size: 2rem !important;
+  }
+  .hero-desc {
+    font-size: 1rem !important;
+  }
+  header, .header-left, .header-right {
+    height: auto !important;
+    min-height: unset !important;
+    padding: 0.5rem 0.5rem !important;
+  }
+  nav {
+    gap: 1.2rem !important;
+    font-size: 1rem !important;
+  }
+}
+@media (max-width: 600px) {
+  .collections {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+    padding: 0 0.2rem !important;
+  }
+  .collection-card {
+    width: 98vw !important;
+    max-width: 98vw !important;
+    margin: 0 auto 0.7rem auto !important;
+  }
+  .card-content h3 {
+    font-size: 1rem !important;
+  }
+  .card-content {
+    padding: 0.7rem 0.5rem 0.4rem 0.5rem !important;
+  }
+  .hero-title {
+    font-size: 1.3rem !important;
+  }
+  .hero-desc {
+    font-size: 0.95rem !important;
+  }
+  header, .header-left, .header-right {
+    height: auto !important;
+    min-height: unset !important;
+    padding: 0.3rem 0.2rem !important;
+  }
+  nav {
+    gap: 0.7rem !important;
+    font-size: 0.95rem !important;
+  }
+  .info.btn, a[style*='Contact Me'] {
+    font-size: 0.95rem !important;
+    min-width: 90px !important;
+    max-width: 140px !important;
+    height: 2.2rem !important;
+    padding: 0.4rem 1rem !important;
+  }
+}
+
+/* === RESPONSIVE: Layout mobile tetap mirip desktop, horizontal scroll jika perlu === */
+@media (max-width: 900px) {
+  header, .header-left, .header-right {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    overflow-x: auto !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    padding: 0 0.5rem !important;
+    gap: 0.5rem !important;
+    max-width: 100vw !important;
+  }
+  nav {
+    flex-direction: row !important;
+    gap: 1.2rem !important;
+    font-size: 1rem !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    max-width: 100vw !important;
+  }
+  .hero {
+    flex-direction: row !important;
+    align-items: stretch !important;
+    min-height: 220px !important;
+    height: auto !important;
+    max-width: 100vw !important;
+    overflow-x: auto !important;
+  }
+  .hero-left, .hero-right {
+    padding: 1rem 0.5rem !important;
+    min-width: 220px !important;
+    max-width: 100vw !important;
+  }
+  .hero-title {
+    font-size: 1.3rem !important;
+  }
+  .hero-desc {
+    font-size: 1rem !important;
+  }
+  .collections {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1.2rem !important;
+    justify-content: center !important;
+    align-items: stretch !important;
+    padding: 0 0.5rem !important;
+    max-width: 100vw !important;
+    overflow-x: auto !important;
+  }
+  .collection-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100vw !important;
+    margin: 0 auto !important;
+  }
+  .card-content h3 {
+    font-size: 1.1rem !important;
+  }
+  .card-content {
+    padding: 1rem 0.7rem 0.5rem 0.7rem !important;
+  }
+}
+@media (max-width: 600px) {
+  header, .header-left, .header-right {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    overflow-x: auto !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    padding: 0 0.2rem !important;
+    gap: 0.2rem !important;
+    max-width: 100vw !important;
+  }
+  nav {
+    flex-direction: row !important;
+    gap: 0.7rem !important;
+    font-size: 0.95rem !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    max-width: 100vw !important;
+  }
+  .hero {
+    flex-direction: row !important;
+    align-items: stretch !important;
+    min-height: 160px !important;
+    height: auto !important;
+    max-width: 100vw !important;
+    overflow-x: auto !important;
+  }
+  .hero-left, .hero-right {
+    padding: 0.5rem 0.2rem !important;
+    min-width: 160px !important;
+    max-width: 100vw !important;
+  }
+  .hero-title {
+    font-size: 1rem !important;
+  }
+  .hero-desc {
+    font-size: 0.9rem !important;
+  }
+  .collections {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.7rem !important;
+    padding: 0 0.2rem !important;
+    max-width: 100vw !important;
+    overflow-x: auto !important;
+  }
+  .collection-card {
+    width: 98vw !important;
+    max-width: 98vw !important;
+    margin: 0 auto 0.7rem auto !important;
+  }
+  .card-content h3 {
+    font-size: 0.95rem !important;
+  }
+  .card-content {
+    padding: 0.7rem 0.5rem 0.4rem 0.5rem !important;
+  }
+  .info.btn, a[style*='Contact Me'] {
+    font-size: 0.95rem !important;
+    min-width: 90px !important;
+    max-width: 140px !important;
+    height: 2.2rem !important;
+    padding: 0.4rem 1rem !important;
+  }
 }

@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="/css/admin-testimoni.css">
     <link rel="stylesheet" href="/css/admin-booking-service.css">
     <link rel="stylesheet" href="/css/sidebar.css">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
     <div class="dashboard-container">
