@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- viewport: checked responsive -->
     <title>Mifta Motor Sport</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
 
@@ -79,7 +79,7 @@
                 gap: 1rem;
             }
             .btn-modern {
-                width: 100%;
+            width: 100%;
                 margin-left: 0;
                 margin-top: 1rem;
             }
@@ -115,25 +115,25 @@
     .testimonial-container { position: relative; }
     </style>
     <style>
-    .testimonial-container {
+        .testimonial-container {
         overflow-x: auto;
         white-space: nowrap;
         scrollbar-width: none;
         -ms-overflow-style: none;
     }
-    .testimonial-cards-wrapper {
-        display: flex;
-        gap: 2rem;
+        .testimonial-cards-wrapper {
+            display: flex;
+            gap: 2rem;
     }
-    .testimonial-card-custom {
+        .testimonial-card-custom {
         min-width: 340px;
         max-width: 340px;
         display: inline-block;
         background: #fff;
-        border-radius: 0.5rem;
-        box-shadow: 0px 5px 20px 0px rgba(0,0,0,0.07);
-        padding: 3rem 2rem;
-        text-align: center;
+            border-radius: 0.5rem;
+            box-shadow: 0px 5px 20px 0px rgba(0,0,0,0.07);
+            padding: 3rem 2rem;
+            text-align: center;
         white-space: normal !important;
         overflow: hidden;
         word-break: break-word;
@@ -144,11 +144,11 @@
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 100%;
-        margin-bottom: 1.5rem;
-    }
+            margin-bottom: 1.5rem;
+        }
     </style>
-    </head>
-    <body>
+</head>
+<body>
     <header>
         <div class="header-left">
             <div class="logo">
@@ -194,7 +194,7 @@
             @else
             <div style="display: flex; gap: 0.5rem;">
                 <a href="/login" class="btn-login">Login</a>
-                <a href="/signup" class="btn-register">Register</a>
+                <a href="{{ route('register') }}" class="btn-register">Register</a>
             </div>
             @endauth
         </div>
@@ -311,15 +311,18 @@
         <div class="collections">
             @if($products->count() > 0)
                 @foreach($products as $product)
-                <div class="collection-card">
-                    <div class="card">
-                        <div class="card-image">
-                            <img src="{{ asset('storage/' . $product->gambar) }}" alt="{{ $product->nama_produk }}" style="width:100%;height:180px;object-fit:cover;border-radius:0.5rem 0.5rem 0 0;">
+                <div class="collection-card" style="width:320px;max-width:100vw;display:flex;flex-direction:column;height:100%;border:1.5px solid #e5e7eb;box-shadow:none;">
+                    <div class="card-image" style="width:100%;height:220px;overflow:hidden;border-radius:0.28rem 0.28rem 0 0;">
+                        <img src="{{ asset('storage/' . $product->gambar_produk) }}" alt="{{ $product->nama_produk }}" style="width:100%;height:100%;object-fit:cover;display:block;">
+                    </div>
+                    <div class="card-content" style="padding:1.25rem 1.25rem 0.5rem 1.25rem;flex:1 1 auto;display:flex;flex-direction:column;gap:0.5rem;">
+                        <h3 style="font-size:1.25rem;font-weight:700;margin:0 0 0.25rem 0;">{{ $product->nama_produk }}</h3>
+                        <div style="font-size:1.05rem;color:#575757;margin-bottom:0.25rem;display:flex;align-items:center;gap:0.5rem;">
+                            <span style="font-size:1.1rem;">&#128690;</span> {{ $product->kategori ?? 'Motor Sport' }}
                         </div>
-                        <div class="card-content" style="padding:1rem;">
-                            <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:0.5rem;">{{ $product->nama_produk }}</h3>
-                            <p class="price" style="color:#FE8400;font-weight:600;margin-bottom:0.5rem;">Rp {{ number_format($product->harga, 0, ',', '.') }}</p>
-                            <p class="description" style="font-size:0.97rem;color:#575757;">{{ $product->deskripsi }}</p>
+                        <div style="display:flex;align-items:center;justify-content:flex-end;gap:0.5vw;margin-top:0.5vw;">
+                            <div style="font-size:1.15vw;font-weight:700;color:#FE8400;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Rp{{ number_format($product->harga, 0, ',', '.') }}</div>
+                            <a href="https://wa.me/6285708150434?text=Halo%20saya%20tertarik%20dengan%20produk%20{{ urlencode($product->nama_produk) }}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;padding:0.5vw 1.5vw;border-radius:0.25vw;background:#FE8400;color:#fff;font-weight:700;font-size:1.1vw;min-width:8vw;max-width:13vw;height:2.5vw;text-decoration:none;transition:background 0.2s;flex:0 0 auto;">Contact Me</a>
                         </div>
                     </div>
                 </div>
@@ -352,9 +355,9 @@
                         <h4 style="font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 600; color: #141414; margin-bottom: 0.5rem;">{{ $testimonial->pengguna->nama ?? 'Anonymous' }}</h4>
                         <p style="font-size: 1rem; color: #575757; text-align: center;">"{{ $testimonial->isi_testimoni }}"</p>
                         <div class="testimonial-rating" style="display:flex;justify-content:center;gap:0.25rem;margin-top:0.5rem;">
-                            @for($i = 1; $i <= 5; $i++)
+                                @for($i = 1; $i <= 5; $i++)
                                 <span class="star" style="color:#FFD700;font-size:1.2rem;">{{ $i <= $testimonial->rating_bintang ? '★' : '☆' }}</span>
-                            @endfor
+                                @endfor
                         </div>
                     </div>
                     @endforeach
@@ -403,7 +406,7 @@
             <a href="#"><span style="font-family:Arial;">&#xf0e1;</span></a>
         </div>
     </footer>
-            <script>
+    <script>
     document.addEventListener("DOMContentLoaded", function () {
     const dateInput = document.getElementById('tanggal');
     const cabangInput = document.getElementById('id_cabang');
@@ -466,9 +469,9 @@
 </script>
     <script>
     // Testimonial auto-scroll kanan-kiri bolak-balik + tombol manual
-    document.addEventListener('DOMContentLoaded', function() {
-        const wrapper = document.getElementById('testimonialWrapper');
-        if (!wrapper) return;
+        document.addEventListener('DOMContentLoaded', function() {
+            const wrapper = document.getElementById('testimonialWrapper');
+            if (!wrapper) return;
         let direction = 1; // 1 = kanan, -1 = kiri
         let scrollStep = 1;
         let interval = null;
@@ -492,7 +495,7 @@
         window.addEventListener('resize', () => {
             // No-op, but could update card width if dynamic
         });
-    });
+        });
     </script>
-    </body>
+</body>
 </html>
