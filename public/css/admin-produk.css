@@ -1,6 +1,5 @@
-/* ...existing code... */
+@import "/public/css/sidebar.css";
 
-/* Product-specific styles */
 .product-image {
     width: 48px;
     height: 48px;
