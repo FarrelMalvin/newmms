@@ -27,8 +27,12 @@ class AdminDashboardController extends Controller
             ->get();
         
         // Get recent services/bookings
+        $idCabang = Auth::user()->adminDetail->id_cabang ?? null;
+        if (!$idCabang) {
+            return back()->with('error', 'Admin belum memiliki cabang. Silakan lengkapi data admin.');
+        }
         $recentServices = Service::with('pengguna')
-            ->where('id_cabang', Auth::user()->adminDetail->id_cabang)
+            ->where('id_cabang', $idCabang)
             ->orderBy('id_service', 'desc')
             ->get();
         
