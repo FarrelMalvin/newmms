@@ -88,7 +88,7 @@ Route::get('/product-customer', [ProdukController::class, 'index'])->name('produ
 
 // Booking Service
 Route::get('/service', [ServiceController::class, 'create'])->name('service.create');
-Route::post('/service', [ServiceController::class, 'store'])->name('service.store');
+Route::post('/service', [ServiceController::class, 'store'])->name('service.store')->middleware('auth', 'role:cust');
 Route::get('/validate-slot', [ServiceController::class, 'validateslot']);
 Route::get('/service-types', [ServiceController::class, 'getServiceTypes']);
 Route::get('/service/history', [ServiceController::class, 'indexByUser'])->name('service.history');
