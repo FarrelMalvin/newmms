@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Models\Service;
 use App\Models\Testimoni;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,7 +39,7 @@ class TestimoniController extends Controller
             }
 
             // Get the latest finished service for this user
-            $service = \App\Models\Service::where('id_pengguna', $user->id_pengguna)
+            $service = Service::where('id_pengguna', $user->id_pengguna)
                 ->where('status', 'fin') // Hanya service yang sudah selesai
                 ->orderBy('id_service', 'desc')
                 ->first();

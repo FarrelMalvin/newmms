@@ -50,7 +50,7 @@
             <div class="category-rectangle active" id="cat-1"><span class="icon-check">&#10003;</span></div><span style="margin-right:2rem;">Oil</span>
             <div class="category-rectangle active" id="cat-2"><span class="icon-check">&#10003;</span></div><span style="margin-right:2rem;">Second Part</span>
             <div class="category-rectangle active" id="cat-3"><span class="icon-check">&#10003;</span></div><span style="margin-right:2rem;">New Part</span>
-            <div class="category-rectangle active" id="cat-4"><span class="icon-check">&#10003;</span></div><span>Apparel</span>
+            <div class="category-rectangle active" id="cat-4"><span class="icon-check">&#10003;</span></div><span style="margin-right:2rem;">Apparel</span>
         </div>
         <!-- Product Card Grid -->
         <div class="product-card-grid" id="productCardGrid">

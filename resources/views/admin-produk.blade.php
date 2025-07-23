@@ -39,9 +39,9 @@
             </nav>
             
             <div class="logout-section">
-                <button onclick="performLogout()">
+                <a href="/logout" onclick="performLogout()" class="logout-btn">
                     <span>Log Out</span>
-                </button>
+                </a>
             </div>
         </div>
 

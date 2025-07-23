@@ -6,6 +6,7 @@
     <title>News Management - Mifta Motor Sport</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/admin-berita.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">   
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
@@ -32,15 +33,15 @@
                     <span>Booking</span>
                 </a>
                 <a href="/admin/berita" class="nav-item active">
-                    <img class="chevron-right" src="/images/chevron-right.png" alt="">
                     <span>News</span>
+                     <img class="chevron-right" src="/images/chevron-right.png" alt="">
                 </a>
             </nav>
             
             <div class="logout-section">
-                <button onclick="performLogout()" class="logout-btn" style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; color: inherit; text-decoration: none; width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: background-color 0.2s;">
+                <a href="/logout" onclick="performLogout()" class="logout-btn">
                     <span>Log Out</span>
-                </button>
+                </a>
             </div>
         </div>
         
