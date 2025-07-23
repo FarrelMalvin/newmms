@@ -1362,6 +1362,76 @@ body {
         margin: 0;
         line-height: 1.5;
     }
+    .pre-footer-bar {
+        height: auto;
+        min-height: 2.5rem;
+        padding: 1rem 0.75rem;
+        text-align: center;
+    }
+
+    .pre-footer-bar span {
+        font-size: 0.8rem !important;
+        line-height: 1.4;
+        display: block;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        padding: 0 1rem;
+        text-align: center;
+    }
+
+    .footer-logo {
+        margin-bottom: 4em;
+        margin-right: 0;
+        width: 50%;
+    }
+
+    .footer-socials {
+        margin-left: 0 !important;
+        display: flex;
+        margin-right: 0 !important;
+        padding-right: 0 !important;
+        justify-content: center;
+        gap: 1.5rem;
+    }
+
+    /* Modal responsive - Enhanced */
+    .modal-content {
+        width: 92vw !important;
+        max-width: 380px !important;
+        margin: 8% auto !important;
+        padding: 1.25rem !important;
+        border-radius: 15px !important;
+    }
+
+    .modal-content h2 {
+        font-size: 1.3rem !important;
+        margin-bottom: 1rem !important;
+    }
+
+    .star-rating {
+        font-size: 1.8rem !important;
+        gap: 0.4rem !important;
+        margin-bottom: 1.25rem !important;
+    }
+
+    #testimoniMessage {
+        font-size: 0.9rem !important;
+        padding: 0.75rem !important;
+        border-radius: 8px !important;
+    }
+
+    .submit-testimoni-btn {
+        padding: 0.75rem 0 !important;
+        font-size: 1rem !important;
+        border-radius: 8px !important;
+        margin-top: 1rem !important;
+    }
 }
 
 /* Extra small devices */
