@@ -281,9 +281,17 @@ body {
     box-shadow: 0 2px 8px rgba(20, 20, 20, 0.04);
     border-bottom: 1px solid #e5e5e5;
     font-family: "Poppins", sans-serif;
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     z-index: 10;
     padding: 0;
+    transition: transform 0.3s ease; /* Smooth animation */
+}
+
+.main-header.header-hidden {
+    transform: translateY(-100%); /* Hide by moving up */
 }
 
 .header-left {
@@ -845,7 +853,53 @@ body {
     box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
 }
 
-/* === IMPROVED MOBILE RESPONSIVENESS - Same as product-cust.css === */
+/* Add this to your existing CSS */
+
+/* Service Completion Modal Styles */
+.completion-btn-secondary:hover {
+    background: #e9ecef !important;
+    border-color: #adb5bd !important;
+    transform: translateY(-1px);
+}
+
+.completion-btn-primary:hover {
+    background: linear-gradient(135deg, #e67600, #cc6600) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(254, 132, 0, 0.3);
+}
+
+/* History Modal Styles */
+.history-tab.active {
+    background: #fe8400;
+    color: white;
+}
+
+.history-tab:hover {
+    background: #f8f9fa;
+    color: #333;
+}
+
+.history-tab.active:hover {
+    background: #e67600;
+    color: white;
+}
+
+/* Pulse animation for completion icon */
+@keyframes completionPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.completion-icon {
+    animation: completionPulse 2s ease-in-out infinite;
+}
 
 /* Large tablets and small desktops */
 @media (max-width: 1024px) {
@@ -1047,8 +1101,14 @@ body {
 /* Mobile phones - Enhanced */
 @media (max-width: 480px) {
     .main-header {
-        padding: 0.5rem 0;
-        min-height: 75px;
+        position: fixed !important; /* Keep fixed on mobile */
+        top: 0 !important;
+        z-index: 1000 !important;
+        background: #fff !important;
+        overflow: visible !important;
+        width: 100% !important;
+        height: auto !important;
+        transition: transform 0.3s ease !important; /* Smooth animation */
     }
 
     .header-left,
@@ -1073,10 +1133,20 @@ body {
     }
 
     .header-menu {
+        position: sticky !important; /* Menu stays within header */
+        top: auto !important;
+        z-index: auto !important;
+        left: auto !important;
+        transform: none !important;
         gap: 12px;
         padding: 0.5rem 0;
         flex-wrap: wrap;
         justify-content: space-around;
+        width: 100% !important;
+        order: 4;
+        margin-top: 0.5rem;
+        background: #fff !important;
+        border-top: 1px solid #e5e5e5;
     }
 
     .header-link {

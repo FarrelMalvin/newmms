@@ -24,6 +24,7 @@
             <a href="/customer/dashboard" class="header-link active">Service</a>
             <a href="/product-customer" class="header-link">Product</a>
             <a href="#" class="header-link" onclick="openTestimoniModal(); return false;">Testimonial</a>
+            
         </nav>
         <div class="header-user" id="headerUser">
             <span class="header-username">{{ Auth::user()->nama }}</span>
@@ -182,7 +183,7 @@
                         </div>
                         <div class="service-detail-item">
                             <p class="service-detail-label">Time</p>
-                            <p class="service-detail-value">{{ \Carbon\Carbon::parse($service->tanggal)->format('H:i') }}</p>
+                            <p class="service-detail-value">{{ \Carbon\Carbon::parse($service->jadwal)->format('H:i') }}</p>
                         </div>
                     </div>
                     
@@ -284,6 +285,90 @@
             <button class="submit-testimoni-btn" style="margin-top:1.5rem; width:100%; background:#FE8400; color:#fff; border:none; border-radius:0.5rem; padding:0.9rem 0; font-size:1.1rem; font-weight:600; cursor:pointer; transition:background 0.2s;">Submit</button>
         </div>
     </div>
+
+    <!-- Service Completion Notification Modal -->
+    <div id="serviceCompletionModal" class="modal" style="display:none; position: fixed; z-index: 10001; left: 0; top: 0; width: 100vw; height: 100vh; overflow: auto; background: rgba(0,0,0,0.6);">
+        <div class="modal-content" style="background: #fff; margin: 10% auto; padding: 0; border-radius: 1rem; width: 90%; max-width: 500px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: modalSlideIn 0.3s ease-out; overflow: hidden;">
+            <!-- Modal Header -->
+            <div class="completion-modal-header" style="background: linear-gradient(135deg, #4CAF50, #45a049); padding: 2rem; text-align: center; color: white;">
+                <div class="completion-icon" style="width: 4rem; height: 4rem; background: rgba(255,255,255,0.2); border-radius: 50%; margin: 0 auto 1rem auto; display: flex; align-items: center; justify-content: center;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h3 style="margin: 0; font-family: 'Poppins', sans-serif; font-size: 1.5rem; font-weight: 600;">Service Completed!</h3>
+                <p style="margin: 0.5rem 0 0 0; font-family: 'Poppins', sans-serif; font-size: 1rem; opacity: 0.9;">Your service has been successfully completed</p>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="completion-modal-body" style="padding: 2rem;">
+                <div class="service-completion-details" style="text-align: center; margin-bottom: 1.5rem;">
+                    <div class="service-info" style="background: #f8f9fa; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 1rem;">
+                        <h4 id="completedServiceName" style="font-family: 'Poppins', sans-serif; font-size: 1.2rem; font-weight: 600; color: #333; margin: 0 0 0.5rem 0;"></h4>
+                        <p id="completedServiceLocation" style="font-family: 'Poppins', sans-serif; color: #666; margin: 0 0 0.5rem 0;"></p>
+                        <p id="completedServiceTime" style="font-family: 'Poppins', sans-serif; color: #888; font-size: 0.9rem; margin: 0;"></p>
+                    </div>
+                    
+                    <div class="completion-message" style="margin-bottom: 1.5rem;">
+                        <p style="font-family: 'Poppins', sans-serif; color: #555; line-height: 1.6; margin: 0;">
+                            Thank you for choosing our service! We hope you're satisfied with the quality of our work. 
+                            <br><br>
+                            <strong>Would you like to leave a review and help others discover our service?</strong>
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="completion-actions" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <button type="button" class="completion-btn-secondary" onclick="closeCompletionModal()" style="background: #f8f9fa; color: #6c757d; border: 1px solid #dee2e6; border-radius: 0.5rem; padding: 0.75rem 1.5rem; font-family: 'Poppins', sans-serif; font-size: 1rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease;">
+                        Maybe Later
+                    </button>
+                    <button type="button" class="completion-btn-primary" onclick="openTestimoniFromCompletion()" style="background: linear-gradient(135deg, #FE8400, #e67600); color: white; border: none; border-radius: 0.5rem; padding: 0.75rem 1.5rem; font-family: 'Poppins', sans-serif; font-size: 1rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease;">
+                        Leave a Review
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service History Modal -->
+    <div id="serviceHistoryModal" class="modal" style="display:none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100vw; height: 100vh; overflow: auto; background: rgba(0,0,0,0.5);">
+        <div class="modal-content" style="background: #fff; margin: 5% auto; padding: 0; border-radius: 1rem; width: 90%; max-width: 800px; max-height: 80vh; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: modalSlideIn 0.3s ease-out; overflow: hidden;">
+            <!-- Modal Header -->
+            <div class="history-modal-header" style="background: linear-gradient(135deg, #FE8400, #e67600); padding: 2rem; text-align: center; color: white; position: relative;">
+                <span class="close-history" onclick="closeServiceHistory()" style="position:absolute; top:1rem; right:1.5rem; font-size:2rem; color:white; cursor:pointer;">&times;</span>
+                <h3 style="margin: 0; font-family: 'Poppins', sans-serif; font-size: 1.5rem; font-weight: 600;">Service History</h3>
+                <p style="margin: 0.5rem 0 0 0; font-family: 'Poppins', sans-serif; font-size: 1rem; opacity: 0.9;">Your completed services and testimonials</p>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="history-modal-body" style="padding: 0; max-height: 60vh; overflow-y: auto;">
+                <!-- Tab Navigation -->
+                <div class="history-tabs" style="display: flex; background: #f8f9fa; border-bottom: 1px solid #dee2e6;">
+                    <button class="history-tab active" onclick="switchHistoryTab('services')" data-tab="services" style="flex: 1; padding: 1rem; background: none; border: none; font-family: 'Poppins', sans-serif; font-weight: 500; cursor: pointer; transition: all 0.2s ease;">
+                        Completed Services
+                    </button>
+                    <button class="history-tab" onclick="switchHistoryTab('testimonials')" data-tab="testimonials" style="flex: 1; padding: 1rem; background: none; border: none; font-family: 'Poppins', sans-serif; font-weight: 500; cursor: pointer; transition: all 0.2s ease;">
+                        My Testimonials
+                    </button>
+                </div>
+                
+                <!-- Tab Content -->
+                <div id="servicesTabContent" class="tab-content active" style="padding: 1.5rem;">
+                    <div id="servicesList" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <!-- Services will be loaded here -->
+                    </div>
+                </div>
+                
+                <div id="testimonialsTabContent" class="tab-content" style="padding: 1.5rem; display: none;">
+                    <div id="testimonialsList" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <!-- Testimonials will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Toggle dropdown on click user/profile
         const headerUser = document.getElementById('headerUser');
@@ -302,26 +387,37 @@
         let userHasService = true; // Flag untuk validasi
         
         document.addEventListener('DOMContentLoaded', function() {
-            // Get valid service ID when modal opens
-            async function getValidService() {
-                try {
-                    const response = await fetch('/testimoni/valid-service', {
-                        method: 'GET',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json'
-                        }
-                    });
-                    const result = await response.json();
-                    if (response.ok) {
-                        validServiceId = result.id_service;
-                        document.getElementById('testimoniIdService').value = validServiceId;
-                        userHasService = !(result.message && result.message.toLowerCase().includes('default'));
-                    }
-                } catch (err) {
-                    userHasService = false;
-                }
+
+            let lastScrollTop = 0;
+            const header = document.querySelector('.main-header');
+            const scrollThreshold = 10; // Minimum scroll distance to trigger hide/show
+        
+            window.addEventListener('scroll', function() {
+                const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Don't hide header when at top of page
+            if (currentScroll <= 0) {
+                header.classList.remove('header-hidden');
+                return;
             }
+            
+            // Only act if scroll difference is significant enough
+            if (Math.abs(currentScroll - lastScrollTop) < scrollThreshold) {
+                return;
+            }
+            
+            if (currentScroll > lastScrollTop) {
+                // Scrolling down - hide header
+                header.classList.add('header-hidden');
+            } else {
+                // Scrolling up - show header
+                header.classList.remove('header-hidden');
+            }
+            
+            lastScrollTop = currentScroll;
+        });
+            // Get valid service ID when modal opens
+           
             
             const stars = document.querySelectorAll('.star-rating .star');
             stars.forEach((star, idx) => {
@@ -335,10 +431,19 @@
             // Submit Testimoni
             document.querySelector('.submit-testimoni-btn').addEventListener('click', async function() {
                 const id_pengguna = document.getElementById('testimoniIdPengguna').value;
-                const id_service = validServiceId; // Use the dynamically obtained service ID
+                 const id_service = document.getElementById('testimoniIdService').value || validServiceId;
                 const isi_testimoni = document.getElementById('testimoniMessage').value;
                 const menyoroti = document.getElementById('testimoniMenyoroti').value;
                 const msgDiv = document.getElementById('testimoniMsg');
+
+                 console.log('Submitting testimonial with:', { // Debug log
+                    id_pengguna,
+                    id_service,
+                    isi_testimoni,
+                    menyoroti,
+                    rating_bintang: selectedRating
+                });
+
                 if (!userHasService) {
                     msgDiv.innerHTML = '<span style="color:red;">You must do a service first.</span>';
                     return;
@@ -360,28 +465,58 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            id_pengguna,
-                            id_service,
+                           id_pengguna: parseInt(id_pengguna),
+                            id_service: parseInt(id_service),
                             isi_testimoni,
                             menyoroti,
                             rating_bintang: selectedRating
                         })
                     });
                     const result = await response.json();
+                    console.log('Testimonial response:', result); // Debug log
+
                     if (response.ok) {
                         msgDiv.innerHTML = '<span style="color:green;">' + result.message + '</span>';
                         document.getElementById('testimoniMessage').value = '';
                         selectedRating = 0;
                         document.querySelectorAll('.star-rating .star').forEach(s => s.innerHTML = '\u2606');
+                        setTimeout(() => {
+                        closeTestimoniModal();
+                    }, 2000);
                     } else {
                         msgDiv.innerHTML = '<span style="color:red;">' + (result.error || result.message) + '</span>';
                     }
                 } catch (err) {
+                    console.error('Error submitting testimonial:', err);
                     msgDiv.innerHTML = '<span style="color:red;">Terjadi kesalahan saat mengirim testimoni.</span>';
                 }
             });
         });
         
+         async function getValidService() {
+                try {
+                    const response = await fetch('/testimoni/valid-service', {
+                        method: 'GET',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        }
+                    });
+                    const result = await response.json();
+                    console.log('Valide service response:', result);
+                    if (response.ok && result.id_service) {
+                        validServiceId = result.id_service;
+                        document.getElementById('testimoniIdService').value = validServiceId;
+                    userHasService = true;
+                    } else {
+                       console.log('No valid service found:', result.message);
+                        userHasService = false;
+                    }
+                } catch (err) {
+                    console.error('Error fetching valid service:', err);
+                    userHasService = false;
+                }
+            }
         // Modal Testimoni
         function openTestimoniModal() {
             document.getElementById('testimoniModal').style.display = 'block';
@@ -440,6 +575,223 @@
             document.body.appendChild(form);
             form.submit();
         }
+
+        // Service completion checking functions
+        let currentCompletedServiceId = null;
+
+        function checkForCompletedServices() {
+            fetch('/check-completed-services', {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.hasCompleted) {
+                    showServiceCompletionModal(data.service);
+                }
+            })
+            .catch(error => {
+                console.log('Error checking completed services:', error);
+            });
+        }
+
+        function showServiceCompletionModal(service) {
+            currentCompletedServiceId = service.id;
+            
+            // Update modal content
+            document.getElementById('completedServiceName').textContent = service.service_name;
+            document.getElementById('completedServiceLocation').textContent = `Location: ${service.location}`;
+            document.getElementById('completedServiceTime').textContent = `Completed: ${service.completed_at}`;
+            
+            // Show modal
+            document.getElementById('serviceCompletionModal').style.display = 'block';
+            
+            // Add escape key listener
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeCompletionModal();
+                }
+            });
+        }
+
+        function closeCompletionModal() {
+            if (currentCompletedServiceId) {
+                // Mark service as notified
+                fetch(`/mark-service-notified/${currentCompletedServiceId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Service marked as notified');
+                    }
+                })
+                .catch(error => {
+                    console.log('Error marking service as notified:', error);
+                });
+            }
+            
+            document.getElementById('serviceCompletionModal').style.display = 'none';
+            currentCompletedServiceId = null;
+        }
+
+        function openTestimoniFromCompletion() {
+            // Close completion modal first
+            closeCompletionModal();
+            
+            // Set the service ID for testimonial
+            if (currentCompletedServiceId) {
+                validServiceId = currentCompletedServiceId;
+                document.getElementById('testimoniIdService').value = validServiceId;
+            }
+            
+            // Small delay then open testimonial modal
+            setTimeout(() => {
+                openTestimoniModal();
+            }, 300);
+        }
+
+        // Service History Functions
+        function openServiceHistory() {
+            document.getElementById('serviceHistoryModal').style.display = 'block';
+            loadServiceHistory();
+        }
+
+        function closeServiceHistory() {
+            document.getElementById('serviceHistoryModal').style.display = 'none';
+        }
+
+        function switchHistoryTab(tabName) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.history-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Activate selected tab
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(`${tabName}TabContent`).style.display = 'block';
+            
+            if (tabName === 'services') {
+                loadServiceHistory();
+            } else {
+                loadTestimonialHistory();
+            }
+        }
+
+        function loadServiceHistory() {
+            fetch('/service-history', {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const servicesList = document.getElementById('servicesList');
+                
+                if (data.services.length === 0) {
+                    servicesList.innerHTML = '<p style="text-align: center; color: #666; font-family: \'Poppins\', sans-serif;">No completed services found.</p>';
+                    return;
+                }
+                
+                servicesList.innerHTML = data.services.map(service => `
+                    <div class="service-history-item" style="background: #f8f9fa; border-radius: 0.5rem; padding: 1.5rem; border: 1px solid #e9ecef;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                            <div>
+                                <h4 style="margin: 0 0 0.5rem 0; font-family: 'Poppins', sans-serif; font-size: 1.1rem; font-weight: 600; color: #333;">${service.service_name}</h4>
+                                <p style="margin: 0 0 0.25rem 0; font-family: 'Poppins', sans-serif; color: #666; font-size: 0.9rem;">Location: ${service.location}</p>
+                                <p style="margin: 0; font-family: 'Poppins', sans-serif; color: #888; font-size: 0.85rem;">Completed: ${service.completed_at}</p>
+                            </div>
+                            <div>
+                                ${service.has_testimonial 
+                                    ? '<span style="background: #28a745; color: white; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.8rem; font-family: \'Poppins\', sans-serif;">Reviewed</span>'
+                                    : `<button onclick="openTestimoniForService(${service.id})" style="background: #FE8400; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; font-family: 'Poppins', sans-serif; font-size: 0.9rem; cursor: pointer;">Leave Review</button>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            })
+            .catch(error => {
+                console.log('Error loading service history:', error);
+            });
+        }
+
+        function loadTestimonialHistory() {
+            fetch('/testimonial-history', {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const testimonialsList = document.getElementById('testimonialsList');
+                
+                if (data.testimonials.length === 0) {
+                    testimonialsList.innerHTML = '<p style="text-align: center; color: #666; font-family: \'Poppins\', sans-serif;">No testimonials found.</p>';
+                    return;
+                }
+                
+                testimonialsList.innerHTML = data.testimonials.map(testimonial => `
+                    <div class="testimonial-history-item" style="background: #f8f9fa; border-radius: 0.5rem; padding: 1.5rem; border: 1px solid #e9ecef;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0 0 0.5rem 0; font-family: 'Poppins', sans-serif; font-size: 1.1rem; font-weight: 600; color: #333;">${testimonial.service_name}</h4>
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <div style="display: flex; gap: 0.1rem; color: #FE8400;">
+                                        ${'★'.repeat(testimonial.rating)}${'☆'.repeat(5-testimonial.rating)}
+                                    </div>
+                                    <span style="font-family: 'Poppins', sans-serif; color: #666; font-size: 0.9rem;">${testimonial.rating}/5</span>
+                                </div>
+                                <p style="margin: 0 0 0.5rem 0; font-family: 'Poppins', sans-serif; color: #555; font-size: 0.95rem; line-height: 1.4;">"${testimonial.message}"</p>
+                                <p style="margin: 0; font-family: 'Poppins', sans-serif; color: #888; font-size: 0.85rem;">Submitted: ${testimonial.created_at}</p>
+                            </div>
+                            ${testimonial.highlighted 
+                                ? '<span style="background: #FE8400; color: white; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.8rem; font-family: \'Poppins\', sans-serif;">Featured</span>'
+                                : ''
+                            }
+                        </div>
+                    </div>
+                `).join('');
+            })
+            .catch(error => {
+                console.log('Error loading testimonial history:', error);
+            });
+        }
+
+        function openTestimoniForService(serviceId) {
+                        // Close history modal if open
+            if (document.getElementById('serviceHistoryModal').style.display === 'block') {
+                closeServiceHistory();
+            }
+            
+            // Set the service ID for testimonial
+            validServiceId = serviceId;
+            document.getElementById('testimoniIdService').value = serviceId;
+            userHasService = true;
+            
+            console.log('Opening testimonial for service ID:', serviceId); // Debug log
+            
+            // Open testimonial modal
+            setTimeout(() => {
+                openTestimoniModal();
+            }, 300);
+        }
     </script>
     <!-- Spacer to make page longer -->
     <div style="min-height: 300px;"></div>
@@ -483,7 +835,6 @@
                         <path d="M21.7666 0.5C25.5632 0.5 27.4613 0.500416 28.9062 1.25098C30.1239 1.88348 31.1165 2.87613 31.749 4.09375C32.4996 5.53867 32.5 7.43682 32.5 11.2334V21.7666C32.5 25.5632 32.4996 27.4613 31.749 28.9062C31.1165 30.1239 30.1239 31.1165 28.9062 31.749C27.4613 32.4996 25.5632 32.5 21.7666 32.5H11.2334C7.43682 32.5 5.53867 32.4996 4.09375 31.749C2.87613 31.1165 1.88348 30.1239 1.25098 28.9062C0.500416 27.4613 0.5 25.5632 0.5 21.7666V11.2334C0.5 7.43682 0.500415 5.53867 1.25098 4.09375C1.88348 2.87613 2.87613 1.88348 4.09375 1.25098C5.53867 0.500415 7.43682 0.5 11.2334 0.5H21.7666ZM21.1406 8.07715C18.7997 8.07724 16.9024 10.1304 16.9023 12.665C16.9023 13.0194 16.9394 13.3738 17.0117 13.71C13.4899 13.5192 10.3659 11.6929 8.27637 8.91309C7.90945 9.59446 7.70117 10.3849 7.70117 11.2207C7.70122 12.8104 8.44935 14.2182 9.58789 15.0449C8.89281 15.0177 8.23793 14.8088 7.66602 14.4727V14.5273C7.66602 16.7531 9.12789 18.6064 11.0684 19.0244C10.7101 19.1334 10.3362 19.1885 9.95117 19.1885C9.67831 19.1885 9.41145 19.1609 9.15234 19.1064C9.69246 20.9233 11.258 22.2588 13.1123 22.2861C11.6619 23.5216 9.83293 24.2578 7.84766 24.2578C7.50592 24.2578 7.1693 24.2306 6.83789 24.1943C8.71378 25.4933 10.9406 26.2559 13.335 26.2559C21.1296 26.2557 25.3925 19.2607 25.3926 13.2012C25.3926 13.0013 25.3896 12.8014 25.3818 12.6016C26.2096 11.9565 26.9268 11.148 27.4961 10.2305C26.7373 10.5939 25.9184 10.8392 25.0605 10.9482C25.9374 10.385 26.6089 9.48511 26.9268 8.41309C26.1069 8.93992 25.2005 9.32159 24.2334 9.52148C23.4608 8.63116 22.3594 8.07715 21.1406 8.07715Z" fill="#FE8400"/>
                     </svg>
                 </a>
-                
             </div>
         </div>
     </footer>

@@ -38,9 +38,8 @@ class TestimoniController extends Controller
                 ], 401);
             }
 
-            // Get the latest finished service for this user
             $service = Service::where('id_pengguna', $user->id_pengguna)
-                ->where('status', 'fin') // Hanya service yang sudah selesai
+                ->where('status', 'fin') 
                 ->orderBy('id_service', 'desc')
                 ->first();
 
@@ -115,7 +114,7 @@ class TestimoniController extends Controller
             }
 
             // Validasi service harus ada dan status harus finished
-            $service = \App\Models\Service::where('id_service', $request->id_service)->first();
+            $service = Service::where('id_service', $request->id_service)->first();
             if (!$service) {
                 return response()->json([
                     'message' => 'Service tidak ditemukan.'

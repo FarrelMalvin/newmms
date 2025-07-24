@@ -176,6 +176,35 @@
         }
         // Star rating interaction
         document.addEventListener('DOMContentLoaded', function() {
+            let lastScrollTop = 0;
+    const header = document.querySelector('.main-header');
+    const scrollThreshold = 10; // Minimum scroll distance to trigger hide/show
+    
+    window.addEventListener('scroll', function() {
+        const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // Don't hide header when at top of page
+        if (currentScroll <= 0) {
+            header.classList.remove('header-hidden');
+            return;
+        }
+        
+        // Only act if scroll difference is significant enough
+        if (Math.abs(currentScroll - lastScrollTop) < scrollThreshold) {
+            return;
+        }
+        
+        if (currentScroll > lastScrollTop) {
+            // Scrolling down - hide header
+            header.classList.add('header-hidden');
+        } else {
+            // Scrolling up - show header
+            header.classList.remove('header-hidden');
+        }
+        
+        lastScrollTop = currentScroll;
+    });
+
             const stars = document.querySelectorAll('.star-rating .star');
             stars.forEach((star, idx) => {
                 star.addEventListener('click', function() {

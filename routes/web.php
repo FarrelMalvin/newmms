@@ -10,6 +10,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\TestimoniController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\CustomerDashboardController;
@@ -79,6 +80,7 @@ Route::get('/customer/dashboard', [ServiceController::class, 'indexByUser'])
 Route::get('/service-cabang', [ServiceController::class, 'getServiceCabang']);
 
 
+
 // Produk routes
 Route::resource('produk', ProdukController::class)->only(['index', 'store', 'create']);
 
@@ -108,3 +110,14 @@ Route::get('/berita/{id}', [BeritaController::class, 'getBeritaById']);
 Route::post('/berita', [BeritaController::class, 'postBerita']);
 Route::put('/berita/{id}', [BeritaController::class, 'editBerita']);
 Route::delete('/berita/{id}', [BeritaController::class, 'deleteBerita']);
+
+// Add these routes to your existing routes
+Route::middleware('auth')->group(function () {
+    // ... your existing routes
+    
+    // Service completion and testimonial routes
+    Route::get('/check-completed-services', [CustomerController::class, 'checkCompletedServices'])->name('check.completed.services');
+    Route::post('/mark-service-notified/{service}', [CustomerController::class, 'markServiceNotified'])->name('mark.service.notified');
+    Route::get('/service-history', [CustomerController::class, 'serviceHistory'])->name('service.history');
+    Route::get('/testimonial-history', [CustomerController::class, 'testimonialHistory'])->name('testimonial.history');
+});
