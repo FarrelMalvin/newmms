@@ -23,6 +23,8 @@ class Service extends Model
         'status',
         'lokasi',
         'tipe_service',
+        'completion_notified',
+        'testimonial_eligible',
     ];
 
     public function cabang()
@@ -38,5 +40,10 @@ class Service extends Model
     public function pengguna()
     {
         return $this->belongsTo(Pengguna::class, 'id_pengguna', 'id_pengguna');
+    }
+
+    public function testimoni()
+    {
+        return $this->hasMany(Testimoni::class, 'id_service', 'id_service');
     }
 }

@@ -32,7 +32,7 @@ class MyService
         foreach ($services as $service) {
             $service->update([
                 'status' => 'fin', 
-                'completed_at' => $now
+                'finished_at' => $now
             ]);
             
             $completedCount++;
