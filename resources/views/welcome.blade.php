@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- viewport: checked responsive -->
     <title>Mifta Motor Sport</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@500;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     <style>
         :root {
@@ -1164,7 +1168,7 @@
                 <a href="#services">Service</a>
                 <a href="#product">Product</a>
                 <a href="#testimonial">Testimonial</a>
-                <a href="#customer-dashboard">Customer Dashboard</a>
+                <a href="/customer/dashboard">Customer Dashboard</a>
             </nav>
             @if(Auth::check())
             <div class="user-status" style="position: relative; display: flex; align-items: center; gap: 0.5rem; cursor:pointer; padding:0.2rem 0.7rem; border-radius:0.5rem; transition:background 0.2s;" onclick="event.stopPropagation(); document.getElementById('dropdown-logout').classList.toggle('show');">
@@ -1218,7 +1222,7 @@
                 <a href="#services">Service</a>
                 <a href="#product">Product</a>
                 <a href="#testimonial">Testimonial</a>
-                <a href="#customer-dashboard">Customer Dashboard</a>
+                <a href="/customer/dashboard">Customer Dashboard</a>
             </nav>
             <div class="mobile-auth-buttons">
                 <a href="/login" class="btn-login">Login</a>
@@ -1304,8 +1308,9 @@
         <div class="section-divider"></div>
     </div>
     
-    <div class="appointment-section" id="appointment">
-        <form class="appointment-form-modern">
+    <div class="appointment-section" id="appointment" style="background: #FFE4C6;">
+        <form method="POST" action="{{ route('service.store') }}" class="appointment-form-modern">
+            @csrf
             <div class="appointment-row">
                 <div class="appointment-input">
                     <span class="icon">📅</span>
@@ -1315,18 +1320,14 @@
                     <span class="icon">📍</span>
                     <select id="id_cabang" name="id_cabang" required>
                         <option value="">Service Location</option>
-                        <option value="1">Jakarta Branch</option>
-                        <option value="2">Surabaya Branch</option>
-                        <option value="3">Bandung Branch</option>
+                        <!-- Option diisi JS -->
                     </select>
                 </div>
                 <div class="appointment-input">
                     <span class="icon">🛠️</span>
                     <select id="id_tipe_service" name="id_tipe_service" required>
                         <option value="">Service Type</option>
-                        <option value="1">Regular Service</option>
-                        <option value="2">Premium Service</option>
-                        <option value="3">Repair Service</option>
+                        <!-- Option diisi JS -->
                     </select>
                 </div>
             </div>
@@ -1335,10 +1336,6 @@
                     <span class="icon">⏰</span>
                     <select id="jadwal" name="jadwal" required>
                         <option value="">Service Time</option>
-                        <option value="09:00">09:00 AM</option>
-                        <option value="11:00">11:00 AM</option>
-                        <option value="13:00">01:00 PM</option>
-                        <option value="15:00">03:00 PM</option>
                     </select>
                 </div>
                 <div class="appointment-input">
@@ -1347,9 +1344,9 @@
                 </div>
                 <button type="submit" class="btn-modern">Book Now</button>
             </div>
+            <div id="slot-error" style="color:#d00; margin-top:0.5rem; display:none;">Tidak ada slot tersedia untuk tanggal & cabang ini.</div>
         </form>
     </div>
-    
     <!-- News Section -->
     @if(isset($news) && $news->count() > 0)
     <div class="news-section" id="news-section">
@@ -1607,43 +1604,10 @@
         </div>
     </div>
     
-    <div class="stats-section">
-        <div class="stat">
-            <div class="number">450+</div>
-            <div class="label">Bikes Under Service</div>
-        </div>
-        <div class="stat">
-            <div class="number">800+</div>
-            <div class="label">Happy Clients</div>
-        </div>
-        <div class="stat">
-            <div class="number">750+</div>
-            <div class="label">Rental Locations</div>
-        </div>
-    </div>
-    
-    <div class="help-section-bg" id="customer-dashboard">
-        <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 2.5rem; position: relative; z-index:2;">
-            <h2 class="help-title-custom">Customer Dashboard</h2>
-            <div class="section-divider"></div>
-        </div>
-        <div class="help-container-custom">
-            <form class="contact-form">
-                <input type="text" placeholder="Your Name*" required>
-                <input type="text" placeholder="Your Phone Number*" required>
-                <textarea placeholder="Your Message" required></textarea>
-                <button class="btn" type="submit">Send A Message</button>
-            </form>
-            <div class="contact-image">
-                <img src="https://via.placeholder.com/400x300/FE8400/FFFFFF?text=Contact+Us" alt="Contact">
-            </div>
-        </div>
-    </div>
-    
     <footer>
         <div class="footer-row">
             <div class="footer-logo">
-                <img src="https://via.placeholder.com/120x50/FE8400/FFFFFF?text=MIFTA+MOTOR" alt="Logo" />
+            <img src="/images/logo.png" alt="Mifta Motor Sport Logo" />
             </div>
             <div class="footer-contact">Need help? Please call <span style="color:var(--orange);">+62 812-3456-7890</span></div>
         </div>
@@ -1700,12 +1664,6 @@
                     });
                 }
             });
-        });
-
-        // Form submission handler
-        document.querySelector('.appointment-form-modern').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Appointment booking submitted! We will contact you soon.');
         });
 
         document.querySelector('.contact-form').addEventListener('submit', function(e) {
