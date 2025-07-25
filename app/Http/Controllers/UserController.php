@@ -13,7 +13,7 @@ class UserController extends Controller
         $incomingFields = $request->validate([
             'name' => 'required|min:3',
             'phone' => 'required',
-            'username' => 'required',
+            'username' => ['required', 'regex:/^[A-Za-z0-9_.-]+$/'],
             'password' => 'required|min:8',
         ]);
 

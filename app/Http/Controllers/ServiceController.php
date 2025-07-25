@@ -73,13 +73,16 @@ class ServiceController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_pengguna' => 'required|integer',
+            //'id_pengguna' => 'required|integer', // Hapus validasi ini
             'id_tipe_service' => 'required|integer',
             'id_cabang' => 'required|integer',
             'tanggal' => 'required|date',
             'keluhan' => 'nullable|string',
             'jadwal' => 'required|date_format:H:i',
         ]);
+
+        // Ambil id_pengguna dari Auth
+        $idPengguna = Auth::user()->id_pengguna;
 
         // Cari id_tipe_service jika yang dikirim string nama
         $idTipeService = $request->id_tipe_service;
@@ -92,13 +95,9 @@ class ServiceController extends Controller
             }
         }
 
-        $existing = Service::where('id_pengguna', $request->id_pengguna)
-        ->whereDate('tanggal', $request->tanggal)
-        ->exists();
-
-        $existing = Service::where('id_pengguna', $request->id_pengguna)
+        $existing = Service::where('id_pengguna', $idPengguna)
             ->whereDate('tanggal', $request->tanggal)
-            ->whereIn('status', ['pen', 'fin'])
+            ->whereIn('status', ['pend', 'pros', 'fin'])
             ->exists();
 
         if ($existing) {
@@ -108,7 +107,7 @@ class ServiceController extends Controller
         }
 
         $service = new Service();
-        $service->id_pengguna = $request->id_pengguna;
+        $service->id_pengguna = $idPengguna;
         $service->id_tipe_service = $idTipeService;
         $service->id_cabang = $request->id_cabang;
         $service->tanggal = $request->tanggal;
@@ -119,10 +118,8 @@ class ServiceController extends Controller
         $saved = $service->save();
         Log::info('Service save result', ['saved' => $saved]);
 
-
         //route sementara
         return redirect()->route('customer.dashboard')->with('success', 'Service successfully added');
-
     }
 
     public function getServiceTypes()

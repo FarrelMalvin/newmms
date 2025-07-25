@@ -684,7 +684,7 @@
 
         /* Footer */
         footer {
-            background: #333;
+            background: #141414;
             color: white;
             padding: 2rem 5%;
         }
@@ -1342,7 +1342,11 @@
                     <span class="icon">ℹ️</span>
                     <input type="text" id="keluhan" name="keluhan" placeholder="Describe Your Issue">
                 </div>
-                <button type="submit" class="btn-modern">Book Now</button>
+                @if(Auth::check() && Auth::user()->peran === 'cust')
+                    <button type="submit" class="btn-modern">Book Now</button>
+                @else
+                    <a href="{{ route('login') }}" class="btn-modern" style="display:inline-block; text-align:center;">Login to Book</a>
+                @endif
             </div>
             <div id="slot-error" style="color:#d00; margin-top:0.5rem; display:none;">Tidak ada slot tersedia untuk tanggal & cabang ini.</div>
         </form>

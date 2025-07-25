@@ -38,39 +38,34 @@ class TestimoniController extends Controller
                 ], 401);
             }
 
-            $service = Service::where('id_pengguna', $user->id_pengguna)
-                ->where('status', 'fin') 
-                ->orderBy('id_service', 'desc')
-                ->first();
+            // Ambil semua service finished milik user yang belum ada testimoni
+            $services = Service::where('id_pengguna', $user->id_pengguna)
+                ->where('status', 'fin')
+                ->whereDoesntHave('testimoni', function($q) use ($user) {
+                    $q->where('id_pengguna', $user->id_pengguna);
+                })
+                ->orderBy('finished_at', 'desc')
+                ->get();
 
-            if (!$service) {
+            if ($services->isEmpty()) {
                 return response()->json([
-                    'message' => 'Tidak ada service yang sudah selesai untuk user ini'
+                    'message' => 'Tidak ada service yang sudah selesai untuk user ini yang belum di-review'
                 ], 404);
             }
 
-            // Cek apakah sudah ada testimoni untuk service ini
-            $existingTestimoni = Testimoni::where('id_service', $service->id_service)
-                ->where('id_pengguna', $user->id_pengguna)
-                ->first();
-
-            if ($existingTestimoni) {
-                return response()->json([
-                    'message' => 'Anda sudah membuat testimoni untuk service ini'
-                ], 400);
-            }
-
+            // Kembalikan semua service yang eligible
             return response()->json([
-                'id_service' => $service->id_service,
-                'service_details' => [
-                    'tanggal' => $service->tanggal,
-                    'keluhan' => $service->keluhan,
-                    'status' => $service->status,
-                    'finished_at' => $service->finished_at
-                ],
+                'eligible_services' => $services->map(function($service) {
+                    return [
+                        'id_service' => $service->id_service,
+                        'tanggal' => $service->tanggal,
+                        'keluhan' => $service->keluhan,
+                        'status' => $service->status,
+                        'finished_at' => $service->finished_at
+                    ];
+                }),
                 'message' => 'Service yang valid ditemukan'
             ]);
-            
         } catch (Exception $e) {
             return response()->json([
                 'message' => 'Gagal mendapatkan service',
