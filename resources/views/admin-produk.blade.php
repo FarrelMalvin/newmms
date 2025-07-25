@@ -205,9 +205,9 @@
                             <option value="Apparel">Apparel</option>
                     </select>
                 </div>
-                <div class="form-group">
+                    <div class="form-group">
                     <label for="harga">Price</label>
-                    <input type="number" id="harga" name="harga" required min="0">
+                    <input type="text" id="harga" name="harga" required min="0" inputmode="numeric" pattern="[0-9.,]*">
                 </div>
                 <div class="form-group">
                     <label for="stok">Stock</label>
@@ -245,11 +245,70 @@
     <script>
         // Set up CSRF token
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        // Event listeners
+        document.getElementById('searchProduk').addEventListener('input', applyFilters);
+        document.getElementById('filterStock').addEventListener('change', applyFilters);
+        document.getElementById('filterCategory').addEventListener('change', applyFilters);
+
+        // Add price formatting event listeners
+        document.getElementById('harga').addEventListener('input', handlePriceInput);
+        document.getElementById('harga').addEventListener('keydown', validatePriceInput);
         
         // Variables to track edit mode
         let isEditMode = false;
         let currentProductId = null;
 
+        // Price formatting function
+               // Price formatting function
+        function formatPrice(value) {
+            // Remove all non-digit characters
+            const number = value.replace(/\D/g, '');
+            // Add thousand separators
+            return number.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+
+        // Price input formatting with validation
+        function handlePriceInput(event) {
+            const input = event.target;
+            const cursorPosition = input.selectionStart;
+            const oldValue = input.value;
+            const oldLength = oldValue.length;
+            
+            // Only allow digits and dots
+            const cleanValue = input.value.replace(/[^\d]/g, '');
+            
+            // Format the value
+            const formattedValue = formatPrice(cleanValue);
+            input.value = formattedValue;
+            
+            // Adjust cursor position
+            const newLength = formattedValue.length;
+            const lengthDiff = newLength - oldLength;
+            const newCursorPosition = Math.max(0, cursorPosition + lengthDiff);
+            input.setSelectionRange(newCursorPosition, newCursorPosition);
+        }
+
+         // Get raw price value (remove dots)
+        function getRawPrice(formattedPrice) {
+            return formattedPrice.replace(/\./g, '');
+        }
+
+        // Validate price input to only allow numbers
+        function validatePriceInput(event) {
+            // Allow: backspace, delete, tab, escape, enter
+            if ([8, 9, 27, 13, 46].indexOf(event.keyCode) !== -1 ||
+                // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                (event.keyCode === 65 && event.ctrlKey === true) ||
+                (event.keyCode === 67 && event.ctrlKey === true) ||
+                (event.keyCode === 86 && event.ctrlKey === true) ||
+                (event.keyCode === 88 && event.ctrlKey === true)) {
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((event.shiftKey || (event.keyCode < 48 || event.keyCode > 57)) && (event.keyCode < 96 || event.keyCode > 105)) {
+                event.preventDefault();
+            }
+        }
         // Modal functions
         function showAddModal() {
             isEditMode = false;
@@ -276,6 +335,12 @@
             e.preventDefault();
             
             const formData = new FormData(this);
+            
+            // Convert formatted price back to raw number before sending
+            const priceInput = document.getElementById('harga');
+            const rawPrice = getRawPrice(priceInput.value);
+            formData.set('harga', rawPrice);
+            
             const submitBtn = document.getElementById('submitBtn');
             
             // Disable submit button during request
@@ -367,7 +432,8 @@
                         document.getElementById('productId').value = id;
                         document.getElementById('nama_produk').value = produk.nama_produk || '';
                         document.getElementById('kategori').value = produk.kategori || '';
-                        document.getElementById('harga').value = produk.harga || '';
+                        // Format the price when populating
+                        document.getElementById('harga').value = formatPrice(produk.harga ? produk.harga.toString() : '');
                         document.getElementById('stok').value = produk.stok || '';
                         document.getElementById('deskripsi').value = produk.deskripsi || '';
                         
@@ -447,6 +513,9 @@
         document.getElementById('searchProduk').addEventListener('input', applyFilters);
         document.getElementById('filterStock').addEventListener('change', applyFilters);
         document.getElementById('filterCategory').addEventListener('change', applyFilters);
+
+        // Add price formatting event listener
+        document.getElementById('harga').addEventListener('input', handlePriceInput);
 
         // Close modal when clicking outside
         window.onclick = function(event) {

@@ -127,6 +127,33 @@
             
             const formData = new FormData(this);
             const submitBtn = document.getElementById('submitBtn');
+            const fileInput = document.querySelector('input[type="file"]');
+            
+            // Validate file size on frontend
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const maxSize = 5 * 1024 * 1024; // 5 MB
+
+                if (file.size > maxSize) {
+                    // make a popup mod
+                    alert('File size must be less than 5MB');
+                    
+                    return;
+                }
+                
+                // Check file type
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+                if (!allowedTypes.includes(file.type)) {
+                    alert('Only JPEG, PNG, JPG, and GIF files are allowed');
+                    return;
+                }
+                
+                console.log('File info:', {
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                });
+            }
             
             submitBtn.disabled = true;
             submitBtn.textContent = isEditMode ? 'Updating...' : 'Publishing...';
@@ -140,26 +167,59 @@
                 formData.append('_method', 'PUT');
             }
             
+            // Log form data for debugging
+            console.log('Submitting to:', url);
+            console.log('Method:', method);
+            console.log('FormData entries:');
+            for (let pair of formData.entries()) {
+                if (pair[1] instanceof File) {
+                    console.log(pair[0] + ': File - ' + pair[1].name + ' (' + pair[1].size + ' bytes)');
+                } else {
+                    console.log(pair[0] + ': ' + pair[1]);
+                }
+            }
+            
             fetch(url, {
                 method: method === 'PUT' ? 'POST' : method,
                 headers: {
                     'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                    // Don't set Content-Type header - let browser set it for FormData
                 },
                 body: formData
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response headers:', [...response.headers.entries()]);
+                
+                return response.text().then(text => {
+                    try {
+                        return JSON.parse(text);
+                    } catch (e) {
+                        console.error('Response is not valid JSON:', text);
+                        throw new Error('Invalid JSON response: ' + text.substring(0, 100));
+                    }
+                });
+            })
             .then(data => {
+                console.log('Response data:', data);
                 if (data.message) {
                     alert(data.message);
                     resetForm();
                     loadNews();
+                } else if (data.errors) {
+                    let errorMessage = 'Validation errors:\n';
+                    Object.keys(data.errors).forEach(key => {
+                        errorMessage += `${key}: ${data.errors[key].join(', ')}\n`;
+                    });
+                    alert(errorMessage);
                 } else if (data.error) {
                     alert('Error: ' + data.error);
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('Error saving news');
+                console.error('Fetch error:', error);
+                alert('Error saving news: ' + error.message);
             })
             .finally(() => {
                 submitBtn.disabled = false;

@@ -37,6 +37,10 @@ Route::get('/admin/booking', [ServiceController::class, 'indexBycabang'])->middl
 Route::get('/admin/produk', [ProdukController::class, 'index'])
     ->middleware(['auth', 'role:admin']);
 
+Route::get('/berita', [BeritaController::class, 'getBerita'])
+    ->name('berita.index')
+    ->middleware('auth', 'role:admin');
+
 // Admin API endpoints
 Route::prefix('/admin/api')->middleware(['auth', 'role:admin'])->group(function () {
     // Testimoni API
@@ -121,3 +125,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/service-history', [CustomerController::class, 'serviceHistory'])->name('service.history');
     Route::get('/testimonial-history', [CustomerController::class, 'testimonialHistory'])->name('testimonial.history');
 });
+
+
+// Berita in Admin Dashboard
+Route::get('admin/dashboard/berita/{id}', [AdminDashboardController::class, 'getBerita']);
+Route::put('admin/dashboard/berita/{id}', [AdminDashboardController::class, 'editBerita']);

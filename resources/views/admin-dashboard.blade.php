@@ -194,7 +194,7 @@
                             </div>
                             <div class="news-actions">
                                 <button class="btn-icon" onclick="editBerita({{ $berita->id_berita }})">✏️</button>
-                                <button class="btn-icon delete">🗑️</button>
+                                <button class="btn-icon delete" onclick="deleteBerita({{ $berita->id_berita }})">🗑️</button>
                             </div>
                         </div>
                         @empty
@@ -226,10 +226,11 @@
                 <div class="form-group">
                     <label for="kategori">Category</label>
                     <select id="kategori" name="kategori" required>
-                        <option value="">Select Category</option>
-                        <option value="electronics">Electronics</option>
-                        <option value="accessories">Accessories</option>
-                        <option value="services">Services</option>
+                        <option value="">All Categories</option>
+                        <option value="Oil">Oil</option>
+                        <option value="Second Part">Second Part</option>
+                        <option value="New Part">New Part</option>
+                        <option value="Apparel">Apparel</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -255,6 +256,52 @@
             </form>
         </div>
     </div>
+
+    <div id="beritaModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="beritaModalTitle">Edit News</h3>
+                <span class="close" onclick="closeBeritaModal()">&times;</span>
+            </div>
+            <form id="editBeritaForm">
+                <!-- Hidden field to track berita ID for editing -->
+                <input type="hidden" id="beritaId" name="beritaId" value="">
+                
+                <div class="form-group">
+                    <label for="judul_berita">News Title</label>
+                    <input type="text" id="judul_berita" name="judul_berita" required maxlength="255">
+                </div>
+                
+                <div class="form-group">
+                    <label for="berita_judul">Subtitle</label>
+                    <input type="text" id="berita_judul" name="berita_judul" maxlength="255">
+                </div>
+                
+                <div class="form-group">
+                    <label for="berita_deskripsi">Description</label>
+                    <textarea id="berita_deskripsi" name="berita_deskripsi" required rows="3" maxlength="500"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="berita_konten">Content</label>
+                    <textarea id="berita_konten" name="berita_konten" rows="6" maxlength="2000"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="foto">News Image</label>
+                    <input type="file" id="foto" name="foto" accept="image/*">
+                    <small class="form-text">Leave empty to keep current image</small>
+                    <div id="currentImage" style="margin-top: 10px;"></div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeBeritaModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="beritaSubmitBtn">Update News</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
 
     <script>
@@ -316,6 +363,158 @@
         });
     });
 
+     let isEditBeritaMode = false;
+        let currentBeritaId = null;
+
+        function editBerita(id) {
+            fetch(`/admin/dashboard/berita/${id}`)  // This is correct now
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.berita) {
+                        const berita = data.berita;
+                        
+                        // Set edit mode
+                        isEditBeritaMode = true;
+                        currentBeritaId = id;
+                        
+                        // Update modal title
+                        document.getElementById('beritaModalTitle').textContent = 'Edit News';
+                        document.getElementById('beritaSubmitBtn').textContent = 'Update News';
+                        
+                        // Populate form fields
+                        document.getElementById('beritaId').value = id;
+                        document.getElementById('judul_berita').value = berita.judul_berita || '';
+                        document.getElementById('berita_judul').value = berita.judul || '';
+                        document.getElementById('berita_deskripsi').value = berita.deskripsi || '';
+                        document.getElementById('berita_konten').value = berita.konten || '';
+                        
+                        // Show current image if exists
+                        const currentImageDiv = document.getElementById('currentImage');
+                        if (berita.foto) {
+                            currentImageDiv.innerHTML = `
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <img src="/storage/${berita.foto}" alt="Current image" style="width: 100px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
+                                    <span style="font-size: 0.9em; color: #666;">Current image</span>
+                                </div>
+                            `;
+                        } else {
+                            currentImageDiv.innerHTML = '<span style="font-size: 0.9em; color: #999;">No image uploaded</span>';
+                        }
+                        
+                        // Show modal
+                        document.getElementById('beritaModal').style.display = 'block';
+                    } else {
+                        alert('Error fetching news data: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error fetching news data');
+                });
+        }
+
+        function deleteBerita(id) {
+            if (confirm('Are you sure you want to delete this news?')) {
+                fetch(`/berita/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                        location.reload();
+                    } else if (data.error) {
+                        alert('Error: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error deleting news');
+                });
+            }
+        }
+
+        function closeBeritaModal() {
+            document.getElementById('beritaModal').style.display = 'none';
+            isEditBeritaMode = false;
+            currentBeritaId = null;
+            
+            // Reset form
+            document.getElementById('editBeritaForm').reset();
+            document.getElementById('currentImage').innerHTML = '';
+        }
+
+        // Handle berita form submission
+        document.getElementById('editBeritaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!currentBeritaId) {
+                alert('No news selected for editing');
+                return;
+            }
+            
+            const formData = new FormData(this);
+            const submitBtn = document.getElementById('beritaSubmitBtn');
+            
+            // Disable submit button during request
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Updating...';
+            
+            // Add method override for PUT request
+            formData.append('_method', 'PUT');
+            
+            fetch(`/admin/dashboard/berita/${currentBeritaId}`, {  // Fixed: Added leading slash
+                method: 'POST', // Laravel PUT with files workaround
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message || data.success) {
+                    alert(data.message || 'News updated successfully');
+                    closeBeritaModal();
+                    location.reload(); // Refresh to show updated data
+                } else if (data.error) {
+                    alert('Error: ' + data.error);
+                } else if (data.errors) {
+                    // Handle validation errors
+                    let errorMessage = 'Validation errors:\n';
+                    Object.keys(data.errors).forEach(key => {
+                        errorMessage += `• ${key}: ${data.errors[key].join(', ')}\n`;
+                    });
+                    alert(errorMessage);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating news');
+            })
+            .finally(() => {
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Update News';
+            });
+        });
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('addModal');
+            const beritaModal = document.getElementById('beritaModal');
+            
+            if (event.target === modal) {
+                closeModal();
+            }
+            if (event.target === beritaModal) {
+                closeBeritaModal();
+            }
+        });
+
         function closeModal() {
         document.getElementById('addModal').style.display = 'none';
         isEditMode = false;
@@ -323,7 +522,7 @@
     }       
         function deleteTestimoni(id) {
             if (confirm('Are you sure you want to delete this testimonial?')) {
-                fetch(`/admin/testimoni/${id}`, {
+                fetch(`/testimoni/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -344,23 +543,7 @@
             }
         }
 
-        function editBerita(id) {
-            // Redirect to edit page or open modal
-            fetch(`/admin/berita/${id}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Handle successful fetch, e.g., open modal with data
-                        console.log(data);
-                    } else {
-                        alert('Error fetching berita data');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error fetching berita data');
-                });
-        }
+        
         function editProduct(id) {
             fetch(`/admin/api/produk/${id}`)
                 .then(response => response.json())

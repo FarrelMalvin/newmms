@@ -111,6 +111,13 @@
 
                         <div class="rating-section">
                             <div class="stars">
+                                @for ($i = 1; $i <= 5; $i++)
+                                    @if ($i <= $item->rating_bintang)
+                                        <span style="color: #FFD700;">&#9733;</span>
+                                    @else
+                                        <span style="color: #E0E0E0;">&#9733;</span>
+                                    @endif
+                                @endfor
                             </div>
                         </div>
 
