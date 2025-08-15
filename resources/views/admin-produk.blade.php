@@ -38,10 +38,16 @@
                 </a>
             </nav>
             
-            <div class="logout-section">
-                <a href="/logout" onclick="performLogout()" class="logout-btn">
-                    <span>Log Out</span>
+            <div class="admin-actions-section" style="margin-top: auto; padding: 1rem;">
+                <a href="/admin/reset-password" class="reset-password-btn" style="display: flex; align-items: center; gap: 0.5rem; color: #FE8400; text-decoration: none; width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: background 0.2s; background: rgba(254, 132, 0, 0.1); margin-bottom: 0.5rem;">
+                    <span>🔐 Reset Password</span>
                 </a>
+            </div>
+            
+            <div class="logout-section">
+                <button onclick="performLogout()" class="logout-btn" style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; color: inherit; text-decoration: none; width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: background 0.2s;">
+                    <span>Log Out</span>
+                </button>
             </div>
         </div>
 
@@ -120,7 +126,7 @@
                     <div class="testimonial-card product-card">
                         <div class="card-header">
                             <div class="customer-profile">
-                                <img src="{{ $item->gambar_produk ? asset('storage/' . $item->gambar_produk) : 'https://ui-avatars.com/api/?name=' . urlencode($item->nama_produk) . '&background=eeeeee&color=141414&size=48' }}" alt="Product" class="customer-avatar product-image">
+                                <img src="{{ $item->gambar_produk ? asset('storage/') . '/' . str_replace('storage/', '', $item->gambar_produk) : \App\Helpers\ImageHelper::getProductAvatar($item->nama_produk, 48) }}" alt="Product" class="customer-avatar product-image" onerror="this.src='{{ \App\Helpers\ImageHelper::getProductAvatar($item->nama_produk, 48) }}'">
                                 <div class="customer-details">
                                     <h4 class="customer-name">{{ $item->nama_produk ?? 'Unknown Product' }}</h4>
                                     <p class="customer-type">{{ $item->kategori ?? 'General' }}</p>
@@ -459,7 +465,7 @@
                         document.getElementById('viewContent').innerHTML = `
                             <div class="product-details">
                                 <div style="text-align: center; margin-bottom: 20px;">
-                                    <img src="${produk.gambar_produk ? '/storage/' + produk.gambar_produk : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(produk.nama_produk) + '&background=eeeeee&color=141414&size=200'}" style="width: 200px; height: 200px; object-fit: cover; border-radius: 8px; border: 1px solid #e5e7eb;">
+                                    <img src="${produk.gambar_produk ? '{{ asset('storage/') }}/' + produk.gambar_produk.replace('storage/', '') : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(produk.nama_produk) + '&background=FE8400&color=ffffff&size=200&font-size=0.4'}" style="width: 200px; height: 200px; object-fit: cover; border-radius: 8px; border: 1px solid #e5e7eb;">
                                 </div>
                                 <h3 style="margin-bottom: 15px; color: #1f2937;">${produk.nama_produk}</h3>
                                 <p style="margin-bottom: 10px;"><strong>Category:</strong> ${produk.kategori}</p>

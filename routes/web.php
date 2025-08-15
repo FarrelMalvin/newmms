@@ -72,7 +72,6 @@ Route::prefix('/admin/api')->middleware(['auth', 'role:admin'])->group(function 
     Route::post('/service/cancel/{id}', [ServiceController::class, 'customerCancel']);
 });
 
-Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
@@ -89,15 +88,14 @@ Route::get('/service-cabang', [ServiceController::class, 'getServiceCabang']);
 Route::resource('produk', ProdukController::class)->only(['index', 'store', 'create']);
 
 // Halaman produk customer
-Route::get('/customer/product', [ProdukController::class, 'index'])->name('customer.product')->middleware('auth');
-Route::get('/product-customer', [ProdukController::class, 'index'])->name('product.customer');
+Route::get('/customer/product', [ProdukController::class, 'customerIndex'])->name('customer.product')->middleware('auth');
+Route::get('/product-customer', [ProdukController::class, 'customerIndex'])->name('product.customer')->middleware('no-cache');
 
 // Booking Service
 Route::get('/service', [ServiceController::class, 'create'])->name('service.create');
 Route::post('/service', [ServiceController::class, 'store'])->name('service.store')->middleware('auth', 'role:cust');
 Route::get('/validate-slot', [ServiceController::class, 'validateslot']);
 Route::get('/service-types', [ServiceController::class, 'getServiceTypes']);
-Route::get('/service/history', [ServiceController::class, 'indexByUser'])->name('service.history');
 Route::post('/service/{id}/cancel', [ServiceController::class, 'customerCancel'])->name('service.cancel');
 Route::get('/service/all', [ServiceController::class, 'indexBycabang'])->name('service.all');
 Route::post('/service/{id}/start', [ServiceController::class, 'startService'])->name('service.start');
@@ -130,3 +128,8 @@ Route::middleware('auth')->group(function () {
 // Berita in Admin Dashboard
 Route::get('admin/dashboard/berita/{id}', [AdminDashboardController::class, 'getBerita']);
 Route::put('admin/dashboard/berita/{id}', [AdminDashboardController::class, 'editBerita']);
+
+// Admin Password Reset Routes
+Route::get('/admin/reset-password', [App\Http\Controllers\AdminResetPasswordController::class, 'showResetForm'])->name('admin.reset.password.form');
+Route::post('/admin/reset-password', [App\Http\Controllers\AdminResetPasswordController::class, 'resetPassword'])->name('admin.reset.password');
+Route::get('/admin/reset-password/list', [App\Http\Controllers\AdminResetPasswordController::class, 'getAdminList'])->name('admin.reset.password.list');

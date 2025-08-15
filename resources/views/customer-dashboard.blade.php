@@ -467,24 +467,18 @@
                 const menyoroti = document.getElementById('testimoniMenyoroti').value;
                 const msgDiv = document.getElementById('testimoniMsg');
 
-                 console.log('Submitting testimonial with:', { // Debug log
-                    id_pengguna,
-                    id_service,
-                    isi_testimoni,
-                    menyoroti,
-                    rating_bintang: selectedRating
-                });
+
 
                 if (!userHasService) {
                     msgDiv.innerHTML = '<span style="color:red;">You must do a service first.</span>';
                     return;
                 }
                 if (!isi_testimoni.trim()) {
-                    msgDiv.innerHTML = '<span style="color:red;">Pesan testimoni tidak boleh kosong.</span>';
+                    msgDiv.innerHTML = '<span style="color:red;">Testimonial message cannot be empty.</span>';
                     return;
                 }
                 if (selectedRating === 0) {
-                    msgDiv.innerHTML = '<span style="color:red;">Silakan beri rating bintang.</span>';
+                    msgDiv.innerHTML = '<span style="color:red;">Please provide a star rating.</span>';
                     return;
                 }
                 try {
@@ -504,7 +498,7 @@
                         })
                     });
                     const result = await response.json();
-                    console.log('Testimonial response:', result); // Debug log
+
 
                     if (response.ok) {
                         msgDiv.innerHTML = '<span style="color:green;">' + result.message + '</span>';
@@ -650,7 +644,7 @@
                 }
             })
             .catch(error => {
-                console.log('Error checking completed services:', error);
+                // Error checking completed services
             });
         }
 
@@ -686,11 +680,11 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        console.log('Service marked as notified');
+                        // Service marked as notified
                     }
                 })
                 .catch(error => {
-                    console.log('Error marking service as notified:', error);
+                    // Error marking service as notified
                 });
             }
             
@@ -782,7 +776,7 @@
                 `).join('');
             })
             .catch(error => {
-                console.log('Error loading service history:', error);
+                // Error loading service history
             });
         }
 
@@ -826,7 +820,7 @@
                 `).join('');
             })
             .catch(error => {
-                console.log('Error loading testimonial history:', error);
+                // Error loading testimonial history
             });
         }
 
@@ -841,7 +835,7 @@
             document.getElementById('testimoniIdService').value = serviceId;
             userHasService = true;
             
-            console.log('Opening testimonial for service ID:', serviceId); // Debug log
+
             
             // Open testimonial modal
             setTimeout(() => {

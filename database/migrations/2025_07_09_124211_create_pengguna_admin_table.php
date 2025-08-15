@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('pengguna_admin', function (Blueprint $table) {
             $table->unsignedBigInteger('id_pengguna')->primary();
             $table->foreign('id_pengguna')->references('id_pengguna')->on('pengguna')->onDelete('cascade');
-            $table->integer('id_cabang');
+            $table->unsignedBigInteger('id_cabang');
             $table->foreign('id_cabang')->references('id_cabang')->on('cabang')->onDelete('cascade');
         });
     }

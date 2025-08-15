@@ -7,9 +7,48 @@ use App\Models\Produk;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
+use App\Helpers\ImageHelper;
 
 class ProdukController extends Controller
 {
+    /**
+     * Helper method to get correct image path
+     */
+    private function getImagePath($path)
+    {
+        return ImageHelper::getImageUrl($path);
+    }
+
+    /**
+     * Helper method to check if image exists
+     */
+    private function imageExists($path)
+    {
+        return ImageHelper::imageExists($path);
+    }
+
+    /**
+     * Clear all product-related caches
+     */
+    private function clearProductCaches()
+    {
+        // Clear specific product caches
+        cache()->forget('all_produk');
+        cache()->forget('api_produk');
+        cache()->forget('featured_products');
+        
+        // Clear welcome page cache by pattern (more efficient)
+        $keys = cache()->get('cache_keys', []);
+        foreach ($keys as $key) {
+            if (strpos($key, 'welcome_products_v') === 0) {
+                cache()->forget($key);
+            }
+        }
+        
+        // Clear view cache for product pages only
+        \Artisan::call('view:clear');
+    }
+
     public function create()
     {
         return view('produk'); 
@@ -32,33 +71,54 @@ class ProdukController extends Controller
         $produk->nama_produk = $request->nama_produk;
         $produk->harga = $request->harga;
         $produk->stok = $request->stok;
-        $produk->gambar_produk = 'storage/' . $path; 
+        $produk->gambar_produk = $this->getImagePath($path); 
         $produk->deskripsi = $request->deskripsi;
         $produk->kategori = $request->kategori;
         $produk->save();
+        
+        // Clear product caches after adding new product
+        $this->clearProductCaches();
         
         return redirect()->route('produk.index')->with('success', 'Produk berhasil ditambahkan');
     }
 
     public function index()
     {
+        // Clear cache untuk memastikan data terbaru
+        cache()->forget('all_produk');
+        
+        // Ambil semua produk tanpa cache untuk debugging
         $produk = Produk::all();
-        // Jika request ke /product-customer, tampilkan view customer
-        if (request()->is('product-customer')) {
-            return view('product-customer', compact('produk'));
-        }
-        // Jika request ke /customer/product, juga tampilkan view customer
-        if (request()->is('customer/product')) {
-            return view('product-customer', compact('produk'));
-        }
+        
         // Default ke admin
         return view('admin-produk', compact('produk'));
+    }
+
+    public function customerIndex()
+    {
+        // Clear semua cache produk
+        cache()->forget('api_produk');
+        cache()->forget('all_produk');
+        
+        // Ambil semua produk untuk customer
+        $produk = Produk::all();
+        
+        // Set header untuk mencegah browser cache
+        $response = response()->view('product-customer', compact('produk'));
+        $response->header('Cache-Control', 'no-cache, no-store, must-revalidate');
+        $response->header('Pragma', 'no-cache');
+        $response->header('Expires', '0');
+        
+        return $response;
     }
 
     public function getProduk()
     {
         try {
+            // Clear cache dan ambil data fresh
+            cache()->forget('api_produk');
             $produk = Produk::all();
+            
             return response()->json([
                 'message' => 'Produk sukses diambil',
                 'produk' => $produk
@@ -91,11 +151,13 @@ class ProdukController extends Controller
             $produk->kategori = $request->kategori;
 
             if ($request->hasFile('gambar')) {
-                $path = $request->file('gambar')->store('uploads/produk', 'public');
-                $produk->gambar_produk = $path;
+                $produk->gambar_produk = ImageHelper::getStoragePath($request->file('gambar'), 'uploads/produk');
             }
 
             $produk->save();
+
+            // Clear all product caches after adding new product
+            $this->clearProductCaches();
 
             return response()->json([
                 'message' => 'Produk berhasil ditambahkan',
@@ -137,13 +199,15 @@ class ProdukController extends Controller
             if ($request->hasFile('gambar')) {
                 // Delete old image if exists
                 if ($produk->gambar_produk) {
-                    Storage::disk('public')->delete($produk->gambar_produk);
+                    ImageHelper::deleteImage($produk->gambar_produk);
                 }
-                $path = $request->file('gambar')->store('uploads/produk', 'public');
-                $produk->gambar_produk = $path;
+                $produk->gambar_produk = ImageHelper::getStoragePath($request->file('gambar'), 'uploads/produk');
             }
 
             $produk->save();
+
+            // Clear all product caches after updating product
+            $this->clearProductCaches();
 
             return response()->json([
                 'message' => 'Produk berhasil diupdate',
@@ -169,10 +233,13 @@ class ProdukController extends Controller
 
             // Delete image if exists
             if ($produk->gambar_produk) {
-                Storage::disk('public')->delete($produk->gambar_produk);
+                ImageHelper::deleteImage($produk->gambar_produk);
             }
 
             $produk->delete();
+
+            // Clear all product caches after deleting product
+            $this->clearProductCaches();
 
             return response()->json([
                 'message' => 'Produk berhasil dihapus'

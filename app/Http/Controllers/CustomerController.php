@@ -56,10 +56,12 @@ class CustomerController extends Controller
     {
         $userId = Auth::id();
         
+        // Optimasi: Gunakan with() untuk eager loading dan load testimoni sekaligus
         $completedServices = Service::where('id_pengguna', $userId)
             ->where('status', 'fin')
-            ->with(['typeservice', 'cabang'])
+            ->with(['typeservice', 'cabang', 'testimoni'])
             ->orderBy('finished_at', 'desc')
+            ->limit(20) // Tambah limit
             ->get()
             ->map(function($service) use ($userId) {
                 return [
@@ -68,9 +70,7 @@ class CustomerController extends Controller
                     'completed_at' => $service->finished_at ? $service->finished_at->format('M d, Y H:i') : 'N/A',
                     'location' => $service->cabang->nama_cabang ?? 'Main Branch',
                     'date' => $service->tanggal,
-                    'has_testimonial' => Testimoni::where('id_service', $service->id_service)
-                                                 ->where('id_pengguna', $userId)
-                                                 ->exists()
+                    'has_testimonial' => $service->testimoni->where('id_pengguna', $userId)->count() > 0
                 ];
             });
         
@@ -83,9 +83,11 @@ class CustomerController extends Controller
     {
         $userId = Auth::id();
         
+        // Optimasi: Tambah limit dan gunakan created_at untuk ordering
         $testimonials = Testimoni::where('id_pengguna', $userId)
             ->with(['service.typeservice', 'service.cabang'])
-            ->orderBy('created_at', 'desc')
+            ->orderBy('created_at', 'desc') // Gunakan created_at setelah timestamps ditambahkan
+            ->limit(20) // Tambah limit
             ->get()
             ->map(function($testimoni) {
                 return [
@@ -94,7 +96,7 @@ class CustomerController extends Controller
                     'location' => $testimoni->service->cabang->nama_cabang ?? 'Main Branch',
                     'rating' => $testimoni->rating_bintang,
                     'message' => $testimoni->isi_testimoni,
-                    'created_at' => $testimoni->created_at->format('M d, Y H:i'),
+                    'created_at' => $testimoni->created_at ? $testimoni->created_at->format('M d, Y H:i') : 'N/A',
                     'highlighted' => $testimoni->menyoroti
                 ];
             });

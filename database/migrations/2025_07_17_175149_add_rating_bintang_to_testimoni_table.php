@@ -28,7 +28,7 @@ return new class extends Migration
             Schema::create('testimoni', function (Blueprint $table) {
                 $table->integer('id_testimoni')->primary()->autoIncrement();
                 $table->unsignedBigInteger('id_pengguna');
-                $table->integer('id_service');
+                $table->unsignedBigInteger('id_service');
                 $table->text('isi_testimoni');
                 $table->string('menyoroti', 5)->default('false');
                 $table->integer('rating_bintang');

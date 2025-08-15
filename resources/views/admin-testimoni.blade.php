@@ -37,10 +37,16 @@
                 </a>
             </nav>
             
-            <div class="logout-section">
-                <a href="/logout" class="logout-btn">
-                    <span>Log Out</span>
+            <div class="admin-actions-section" style="margin-top: auto; padding: 1rem;">
+                <a href="/admin/reset-password" class="reset-password-btn" style="display: flex; align-items: center; gap: 0.5rem; color: #FE8400; text-decoration: none; width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: background 0.2s; background: rgba(254, 132, 0, 0.1); margin-bottom: 0.5rem;">
+                    <span>🔐 Reset Password</span>
                 </a>
+            </div>
+            
+            <div class="logout-section">
+                <button onclick="performLogout()" class="logout-btn" style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; color: inherit; text-decoration: none; width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: background 0.2s;">
+                    <span>Log Out</span>
+                </button>
             </div>
         </div>
 
@@ -437,6 +443,22 @@
             applyFilters(); 
             showFilterStatus(); 
         });
+
+        // Logout function
+        function performLogout() {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ route("logout") }}';
+            
+            const csrfToken = document.createElement('input');
+            csrfToken.type = 'hidden';
+            csrfToken.name = '_token';
+            csrfToken.value = '{{ csrf_token() }}';
+            
+            form.appendChild(csrfToken);
+            document.body.appendChild(form);
+            form.submit();
+        }
     </script>
 </body>
 </html>

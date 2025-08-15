@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- viewport: checked responsive -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Mifta Motor Sport</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
@@ -14,6 +14,34 @@
             <path d="M15 19L8 12L15 5" stroke="#FE8400" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
     </a>
+    
+    <!-- Success Popup Modal -->
+    @if(session('success'))
+    <div id="successModal" class="modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+        <div class="modal-content" style="background: white; padding: 2rem; border-radius: 12px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: modalSlideIn 0.3s ease-out;">
+            <div class="success-icon" style="margin-bottom: 1rem;">
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <h3 style="color: #10B981; font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; font-family: 'Montserrat', sans-serif;">Success!</h3>
+            <p style="color: #374151; font-size: 1rem; line-height: 1.5; margin-bottom: 1.5rem;">{{ session('success') }}</p>
+            <button onclick="closeModal()" style="background: #10B981; color: white; border: none; padding: 0.75rem 2rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.3s; font-family: 'Montserrat', sans-serif;">Continue</button>
+        </div>
+    </div>
+    
+    <style>
+        @keyframes modalSlideIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        @keyframes modalSlideOut {
+            from { transform: scale(1); opacity: 1; }
+            to { transform: scale(0.8); opacity: 0; }
+        }
+    </style>
+    @endif
+
     <div class="login-container">
         <div class="login-form-section">
             <h2>Login to Your Account</h2>
@@ -53,13 +81,34 @@
 
     <script>
         function handleLogin(event) {
-            
-            // Simulate loading
-            const loginBtn = document.querySelector('.login-btn');
-            const originalText = loginBtn.textContent;
-            loginBtn.textContent = 'Logging in...';
-            loginBtn.disabled = true;
+            // Your existing login handling code here
         }
+
+        function closeModal() {
+            const modal = document.getElementById('successModal');
+            if (modal) {
+                modal.querySelector('.modal-content').style.animation = 'modalSlideOut 0.3s ease-in forwards';
+                setTimeout(() => {
+                    modal.remove();
+                }, 300);
+            }
+        }
+
+        // Auto-close modal after 8 seconds
+        @if(session('success'))
+        setTimeout(function() {
+            closeModal();
+        }, 8000);
+        @endif
+
+        // Close modal when clicking outside
+        @if(session('success'))
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        @endif
     </script>
 </body>
 </html>

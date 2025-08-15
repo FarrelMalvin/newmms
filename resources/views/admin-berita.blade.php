@@ -38,10 +38,16 @@
                 </a>
             </nav>
             
-            <div class="logout-section">
-                <a href="/logout" onclick="performLogout()" class="logout-btn">
-                    <span>Log Out</span>
+            <div class="admin-actions-section" style="margin-top: auto; padding: 1rem;">
+                <a href="/admin/reset-password" class="reset-password-btn" style="display: flex; align-items: center; gap: 0.5rem; color: #FE8400; text-decoration: none; width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: background 0.2s; background: rgba(254, 132, 0, 0.1); margin-bottom: 0.5rem;">
+                    <span>🔐 Reset Password</span>
                 </a>
+            </div>
+            
+            <div class="logout-section">
+                <button onclick="performLogout()" class="logout-btn" style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; color: inherit; text-decoration: none; width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: background 0.2s;">
+                    <span>Log Out</span>
+                </button>
             </div>
         </div>
         
@@ -148,11 +154,7 @@
                     return;
                 }
                 
-                console.log('File info:', {
-                    name: file.name,
-                    size: file.size,
-                    type: file.type
-                });
+
             }
             
             submitBtn.disabled = true;
@@ -167,17 +169,7 @@
                 formData.append('_method', 'PUT');
             }
             
-            // Log form data for debugging
-            console.log('Submitting to:', url);
-            console.log('Method:', method);
-            console.log('FormData entries:');
-            for (let pair of formData.entries()) {
-                if (pair[1] instanceof File) {
-                    console.log(pair[0] + ': File - ' + pair[1].name + ' (' + pair[1].size + ' bytes)');
-                } else {
-                    console.log(pair[0] + ': ' + pair[1]);
-                }
-            }
+
             
             fetch(url, {
                 method: method === 'PUT' ? 'POST' : method,
@@ -189,9 +181,6 @@
                 body: formData
             })
             .then(response => {
-                console.log('Response status:', response.status);
-                console.log('Response headers:', [...response.headers.entries()]);
-                
                 return response.text().then(text => {
                     try {
                         return JSON.parse(text);
@@ -202,7 +191,6 @@
                 });
             })
             .then(data => {
-                console.log('Response data:', data);
                 if (data.message) {
                     alert(data.message);
                     resetForm();
@@ -255,7 +243,7 @@
             
             newsListContainer.innerHTML = newsList.map(news => `
                 <div class="news-item">
-                    <img src="${news.foto ? '/storage/' + news.foto : 'https://via.placeholder.com/80x80?text=News'}" 
+                    <img src="${news.foto ? '{{ asset('storage/') }}/' + news.foto.replace('storage/', '') : 'https://via.placeholder.com/80x80?text=News'}" 
                          alt="${news.judul_berita}" class="news-image">
                     <div class="news-content">
                         <div class="news-title">${news.judul_berita}</div>

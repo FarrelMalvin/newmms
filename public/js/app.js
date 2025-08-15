@@ -528,7 +528,6 @@ class MMSApp {
 
     onDOMReady() {
         // Initialize any DOM-dependent functionality
-        console.log('MMS App initialized');
     }
 
     handleResize() {

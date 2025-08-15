@@ -85,14 +85,14 @@
             @csrf
 
             <div class="form-group">
-                <label for="tanggal">Tanggal Service</label>
+                <label for="tanggal">Service Date</label>
                 <input type="date" id="tanggal" name="tanggal" required>
             </div>
 
             <div class="form-group">
-                <label for="id_cabang">Cabang</label>
+                <label for="id_cabang">Branch</label>
                 <select id="id_cabang" name="id_cabang" required>
-                    <option value="">Pilih Cabang</option>
+                    <option value="">Select Branch</option>
                     @foreach ($cabangs as $cabang)
                         <option value="{{ $cabang->id_cabang }}">{{ $cabang->nama_cabang }}</option>
                     @endforeach
@@ -100,9 +100,9 @@
             </div>
 
             <div class="form-group">
-                <label for="id_tipe_service">Tipe Service</label>
+                <label for="id_tipe_service">Service Type</label>
                 <select id="id_tipe_service" name="id_tipe_service" required>
-                    <option value="">Pilih Tipe</option>
+                    <option value="">Select Type</option>
                     <option value="daily">Daily</option>
                     <option value="racing1">Racing 1</option>
                     <option value="racing2">Racing 2</option>
@@ -110,28 +110,28 @@
             </div>
 
             <div class="form-group">
-                <label for="keluhan">Keluhan</label>
+                <label for="keluhan">Complaint/Issue</label>
                 <textarea id="keluhan" name="keluhan" rows="3"></textarea>
             </div>
 
 
             <div class="form-group">
-                <label for="jadwal">Jam Service</label>
+                <label for="jadwal">Service Time</label>
                 <select id="jadwal" name="jadwal" required>
-                    <option value="">Pilih Slot</option>
+                    <option value="">Select Slot</option>
                     <option value="09:00">09:00</option>
                     <option value="11:00">11:00</option>
                     <option value="13:00">13:00</option>
                     <option value="15:00">15:00</option>
                 </select>
-                <div id="slot-error" style="color:#d00; margin-top:0.5rem; display:none;">Tidak ada slot tersedia untuk tanggal & cabang ini.</div>
+                <div id="slot-error" style="color:#d00; margin-top:0.5rem; display:none;">No slots available for this date & branch.</div>
             </div>
 
 
             <input type="hidden" name="id_pengguna" value="{{ Auth::user()->id_pengguna }}">
 
 
-            <button type="submit" class="btn-submit">Simpan Booking</button>
+            <button type="submit" class="btn-submit">Save Booking</button>
         </form>
     </div>
 

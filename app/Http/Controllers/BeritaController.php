@@ -72,6 +72,18 @@ class BeritaController extends Controller
                 'konten' => 'nullable|string',
                 'judul' => 'nullable|string|max:255',
                 'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5000' // Changed to 5mb
+            ], [
+                'judul_berita.required' => 'News title is required.',
+                'judul_berita.string' => 'News title must be text.',
+                'judul_berita.max' => 'News title cannot exceed 255 characters.',
+                'deskripsi.required' => 'Description is required.',
+                'deskripsi.string' => 'Description must be text.',
+                'konten.string' => 'Content must be text.',
+                'judul.string' => 'Title must be text.',
+                'judul.max' => 'Title cannot exceed 255 characters.',
+                'foto.image' => 'File must be an image.',
+                'foto.mimes' => 'Image must be in JPEG, PNG, JPG, or GIF format.',
+                'foto.max' => 'Image size cannot exceed 5MB.'
             ]);
 
             $berita = new Berita();
@@ -109,7 +121,7 @@ class BeritaController extends Controller
             $berita->save();
 
             return response()->json([
-                'message' => 'Berita sukses dibuat',
+                'message' => 'News created successfully',
                 'berita' => $berita
             ], 201);
 
@@ -128,19 +140,13 @@ class BeritaController extends Controller
                 ]
             ], 422);
         } catch (Exception $e) {
-            Log::error('Error creating berita: ' . $e->getMessage(), [
-                'request_data' => $request->except(['foto']),
-                'has_file' => $request->hasFile('foto'),
-                'file_info' => $request->hasFile('foto') ? [
-                    'name' => $request->file('foto')->getClientOriginalName(),
-                    'size' => $request->file('foto')->getSize(),
-                    'mime' => $request->file('foto')->getMimeType(),
-                    'error' => $request->file('foto')->getError()
-                ] : null
+            Log::error('Error creating news:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
             
             return response()->json([
-                'message' => 'Gagal membuat berita',
+                'message' => 'Failed to create news',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -154,12 +160,24 @@ class BeritaController extends Controller
                 'konten' => 'nullable|string',
                 'judul' => 'nullable|string|max:255',
                 'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5000' // Changed to 5mb
+            ], [
+                'judul_berita.required' => 'News title is required.',
+                'judul_berita.string' => 'News title must be text.',
+                'judul_berita.max' => 'News title cannot exceed 255 characters.',
+                'deskripsi.required' => 'Description is required.',
+                'deskripsi.string' => 'Description must be text.',
+                'konten.string' => 'Content must be text.',
+                'judul.string' => 'Title must be text.',
+                'judul.max' => 'Title cannot exceed 255 characters.',
+                'foto.image' => 'File must be an image.',
+                'foto.mimes' => 'Image must be in JPEG, PNG, JPG, or GIF format.',
+                'foto.max' => 'Image size cannot exceed 5MB.'
             ]);
 
             $berita = Berita::find($id);
             if (!$berita) {
                 return response()->json([
-                    'message' => 'Berita tidak ditemukan'
+                    'message' => 'News not found'
                 ], 404); // Fix: Use status code as second parameter
             }
 
@@ -184,7 +202,7 @@ class BeritaController extends Controller
             $berita->save();
 
             return response()->json([
-                'message' => 'Berita sukses diperbarui',
+                'message' => 'News updated successfully',
                 'berita' => $berita
             ]);
         } catch (ValidationException $e) {
@@ -194,7 +212,7 @@ class BeritaController extends Controller
             ], 422);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Gagal memperbarui berita',
+                'message' => 'Failed to update news',
                 'error' => $e->getMessage()
             ], 500); 
         }

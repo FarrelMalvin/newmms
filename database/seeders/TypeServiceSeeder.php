@@ -14,16 +14,8 @@ class TypeServiceSeeder extends Seeder
     {
         \DB::table('type_service')->insert([
             [
-                'nama_service' => 'daily',
-                'deskripsi' => 'dummy',
-            ],
-            [
-                'nama_service' => 'racing1',
-                'deskripsi' => 'dummy',
-            ],
-            [
-                'nama_service' => 'racing2',
-                'deskripsi' => 'dummy',
+                'nama_service' => 'Daily',
+                'deskripsi' => 'Regular daily service for motorcycle maintenance',
             ],
         ]);
     }

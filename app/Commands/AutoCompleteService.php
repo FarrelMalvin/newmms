@@ -15,7 +15,7 @@ class AutoCompleteService
 
             $services = Service::where('status', 'pros')
                 ->whereNotNull('started_at')
-                ->where('started_at', '<=', $now->subSeconds(10)) // Changed to 10 seconds
+                ->where('started_at', '<=', $now->subHours(2)) // Changed to 2 hours
                 ->get();
                 
             Log::info('[Scheduler] Ditemukan ' . $services->count() . ' service untuk diubah');

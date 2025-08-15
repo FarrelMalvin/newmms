@@ -8,14 +8,16 @@ class Testimoni extends Model
 {
     protected $table = 'testimoni';
     protected $primaryKey = 'id_testimoni';
-    public $timestamps = false;
+    public $timestamps = true; // Aktifkan timestamps
 
     protected $fillable = [
         'id_pengguna',
         'id_service',
         'isi_testimoni',
         'menyoroti',
-        'rating_bintang'
+        'rating_bintang',
+        'created_at',
+        'updated_at'
     ];
 
     public function pengguna()
@@ -23,7 +25,6 @@ class Testimoni extends Model
         return $this->belongsTo(Pengguna::class, 'id_pengguna', 'id_pengguna');
         
     }
-
 
     public function service()
     {

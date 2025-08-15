@@ -17,31 +17,46 @@ class AdminDashboardController extends Controller
 {
     public function index()
     {
-        $testimoniCount = Testimoni::count();
-        $produkCount = Produk::count() ?? 0;
-        $serviceCount = Service::count() ?? 0;
-        $beritaCount = Berita::count() ?? 0;
+        // Optimasi: Gunakan cache untuk count queries
+        $testimoniCount = cache()->remember('testimoni_count', 300, function() {
+            return Testimoni::count();
+        });
+        
+        $produkCount = cache()->remember('produk_count', 300, function() {
+            return Produk::count();
+        });
+        
+        $serviceCount = cache()->remember('service_count', 300, function() {
+            return Service::count();
+        });
+        
+        $beritaCount = cache()->remember('berita_count', 300, function() {
+            return Berita::count();
+        });
 
+        // Optimasi: Tambah limit untuk recent data
         $recentTestimoni = Testimoni::with(['pengguna', 'service'])
             ->orderBy('id_testimoni', 'desc')
+            ->limit(5)
             ->get();
         
-        // Get recent products
         $recentProduk = Produk::orderBy('id_produk', 'desc')
+            ->limit(5)
             ->get();
         
-        // Get recent services/bookings
         $idCabang = Auth::user()->adminDetail->id_cabang ?? null;
         if (!$idCabang) {
-            return back()->with('error', 'Admin belum memiliki cabang. Silakan lengkapi data admin.');
+            return back()->with('error', 'Admin does not have a branch assigned. Please complete admin data.');
         }
+        
         $recentServices = Service::with('pengguna')
             ->where('id_cabang', $idCabang)
             ->orderBy('id_service', 'desc')
+            ->limit(10)
             ->get();
         
-        // Get recent news
         $recentBerita = Berita::orderBy('id_berita', 'desc')
+            ->limit(5)
             ->get();
         
         return view('admin-dashboard', compact(

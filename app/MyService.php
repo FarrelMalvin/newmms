@@ -19,10 +19,10 @@ class MyService
         logger()->info('Class MyService invoked');
         $now = Carbon::now();
         
-        // Find services that have been in progress for more than 10 seconds
+        // Find services that have been in progress for more than 2 hours
         $services = Service::where('status', 'pros')
             ->whereNotNull('started_at')
-            ->where('started_at', '<=', $now->subSeconds(10))
+            ->where('started_at', '<=', $now->subHours(2))
             ->get();
             
         $completedCount = 0;

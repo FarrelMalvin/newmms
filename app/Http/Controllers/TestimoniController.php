@@ -13,7 +13,13 @@ class TestimoniController extends Controller
     // For API endpoint
     public function getTestimoni() {
         try {
-            $allTestimoni = Testimoni::with('pengguna', 'service')->get();
+            // Optimasi: Tambah limit dan cache
+            $allTestimoni = cache()->remember('all_testimoni', 300, function() {
+                return Testimoni::with('pengguna', 'service')
+                    ->orderBy('created_at', 'desc') // Gunakan created_at setelah timestamps ditambahkan
+                    ->limit(50) // Tambah limit
+                    ->get();
+            });
             
             return response()->json([
                 'message' => 'Testimoni sukses diambil',
@@ -34,7 +40,7 @@ class TestimoniController extends Controller
             $user = Auth::user();
             if (!$user) {
                 return response()->json([
-                    'message' => 'User tidak ditemukan'
+                    'message' => 'User not found'
                 ], 401);
             }
 
@@ -49,7 +55,7 @@ class TestimoniController extends Controller
 
             if ($services->isEmpty()) {
                 return response()->json([
-                    'message' => 'Tidak ada service yang sudah selesai untuk user ini yang belum di-review'
+                    'message' => 'No completed services found for this user that have not been reviewed'
                 ], 404);
             }
 
@@ -64,11 +70,11 @@ class TestimoniController extends Controller
                         'finished_at' => $service->finished_at
                     ];
                 }),
-                'message' => 'Service yang valid ditemukan'
+                'message' => 'Valid services found'
             ]);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Gagal mendapatkan service',
+                'message' => 'Failed to get services',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -77,14 +83,16 @@ class TestimoniController extends Controller
     // For admin view page
     public function index() {
         try {
+            // Optimasi: Tambah limit
             $testimoni = Testimoni::with('pengguna', 'service')
-                ->orderBy('id_testimoni', 'desc')
+                ->orderBy('created_at', 'desc') // Gunakan created_at setelah timestamps ditambahkan
+                ->limit(50) // Tambah limit
                 ->get();
             
             return view('admin-testimoni', compact('testimoni'));
             
         } catch (Exception $e) {
-            return back()->with('error', 'Gagal mengambil testimoni: ' . $e->getMessage());
+            return back()->with('error', 'Failed to load testimonials: ' . $e->getMessage());
         }
     }
     
@@ -96,6 +104,20 @@ class TestimoniController extends Controller
                 'isi_testimoni' => 'required|string|max:1000',
                 'menyoroti' => 'required|string|in:true,false',
                 'rating_bintang' => 'required|integer|min:1|max:5'
+            ], [
+                'id_pengguna.required' => 'User ID is required.',
+                'id_pengguna.exists' => 'User not found.',
+                'id_service.required' => 'Service ID is required.',
+                'id_service.integer' => 'Service ID must be a valid number.',
+                'isi_testimoni.required' => 'Testimonial content is required.',
+                'isi_testimoni.string' => 'Testimonial content must be text.',
+                'isi_testimoni.max' => 'Testimonial content cannot exceed 1000 characters.',
+                'menyoroti.required' => 'Highlight selection is required.',
+                'menyoroti.in' => 'Invalid highlight selection.',
+                'rating_bintang.required' => 'Star rating is required.',
+                'rating_bintang.integer' => 'Star rating must be a number.',
+                'rating_bintang.min' => 'Star rating must be at least 1.',
+                'rating_bintang.max' => 'Star rating cannot exceed 5.'
             ]);
 
             // Cek apakah user sudah pernah mengisi testimoni untuk service ini
@@ -112,21 +134,21 @@ class TestimoniController extends Controller
             $service = Service::where('id_service', $request->id_service)->first();
             if (!$service) {
                 return response()->json([
-                    'message' => 'Service tidak ditemukan.'
+                    'message' => 'Service not found.'
                 ], 404);
             }
 
             // Cek apakah service sudah selesai (status = 'fin')
             if ($service->status !== 'fin') {
                 return response()->json([
-                    'message' => 'Testimoni hanya dapat dibuat untuk service yang sudah selesai (status finished).'
+                    'message' => 'Testimonials can only be created for completed services.'
                 ], 400);
             }
 
             // Cek apakah service milik pengguna yang bersangkutan
             if ($service->id_pengguna != $request->id_pengguna) {
                 return response()->json([
-                    'message' => 'Anda hanya dapat membuat testimoni untuk service Anda sendiri.'
+                    'message' => 'You can only create testimonials for your own services.'
                 ], 403);
             }
 
@@ -139,13 +161,13 @@ class TestimoniController extends Controller
             $testimoni->save();
             
             return response()->json([
-                'message' => 'Testimoni sukses dibuat',
+                'message' => 'Testimonial created successfully',
                 'testimoni' => $testimoni
             ]);
             
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Gagal membuat testimoni',
+                'message' => 'Failed to create testimonial',
                 'error' => $e->getMessage()
             ], 500);
         }

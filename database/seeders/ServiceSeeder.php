@@ -28,7 +28,7 @@ class ServiceSeeder extends Seeder
         // Buat beberapa dummy service dengan status finished untuk pengguna id 6
         Service::create([
             'id_pengguna' => 6,
-            'id_tipe_service' => 1, // daily service
+            'id_tipe_service' => 4, // Daily service
             'tanggal' => Carbon::now()->subDays(30),
             'id_cabang' => 1, // Pakis
             'keluhan' => 'Motor tidak bisa distarter, bunyi aneh saat mesin hidup',
@@ -40,10 +40,10 @@ class ServiceSeeder extends Seeder
 
         Service::create([
             'id_pengguna' => 6,
-            'id_tipe_service' => 2, // racing1 service
+            'id_tipe_service' => 4, // Daily service
             'tanggal' => Carbon::now()->subDays(15),
             'id_cabang' => 2, // Sulfat
-            'keluhan' => 'Performa motor menurun, perlu tune up racing',
+            'keluhan' => 'Performa motor menurun, perlu tune up',
             'jadwal' => '14:00:00',
             'started_at' => Carbon::now()->subDays(15)->setTime(14, 0, 0),
             'finished_at' => Carbon::now()->subDays(15)->setTime(16, 45, 0),
@@ -52,7 +52,7 @@ class ServiceSeeder extends Seeder
 
         Service::create([
             'id_pengguna' => 6,
-            'id_tipe_service' => 3, // racing2 service
+            'id_tipe_service' => 4, // Daily service
             'tanggal' => Carbon::now()->subDays(7),
             'id_cabang' => 1, // Pakis
             'keluhan' => 'Ganti oli dan filter, cek sistem pendingin',
@@ -65,7 +65,7 @@ class ServiceSeeder extends Seeder
         // Buat service dengan status lain untuk variasi
         Service::create([
             'id_pengguna' => 6,
-            'id_tipe_service' => 1, // daily service
+            'id_tipe_service' => 4, // Daily service
             'tanggal' => Carbon::now()->addDays(5),
             'id_cabang' => 2, // Sulfat
             'keluhan' => 'Service rutin bulanan',
@@ -78,7 +78,7 @@ class ServiceSeeder extends Seeder
         // Buat service untuk pengguna lain juga
         Service::create([
             'id_pengguna' => 3, // Customer Satu dari PenggunaSeeder
-            'id_tipe_service' => 1, // daily service
+            'id_tipe_service' => 4, // Daily service
             'tanggal' => Carbon::now()->subDays(20),
             'id_cabang' => 1, // Pakis
             'keluhan' => 'Motor bergetar saat idle',
@@ -90,10 +90,10 @@ class ServiceSeeder extends Seeder
 
         Service::create([
             'id_pengguna' => 3, // Customer Satu
-            'id_tipe_service' => 2, // racing1 service
+            'id_tipe_service' => 4, // Daily service
             'tanggal' => Carbon::now()->subDays(10),
             'id_cabang' => 2, // Sulfat
-            'keluhan' => 'Tune up untuk balapan weekend',
+            'keluhan' => 'Service rutin untuk performa optimal',
             'jadwal' => '15:00:00',
             'started_at' => Carbon::now()->subDays(10)->setTime(15, 0, 0),
             'finished_at' => Carbon::now()->subDays(10)->setTime(17, 30, 0),

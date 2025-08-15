@@ -37,29 +37,29 @@ class TestimoniSeeder extends Seeder
         $additionalTestimoni = [
             [
                 'id_pengguna' => 6,
-                'id_service' => 1, // Service pertama untuk pengguna 6
+                'id_service' => 9, // Service pertama untuk pengguna 6
                 'isi_testimoni' => 'Service sangat memuaskan! Mekanik sangat teliti dan profesional. Motor saya sekarang berjalan dengan lancar tanpa masalah. Harga juga sangat terjangkau untuk kualitas service yang diberikan. Sangat direkomendasikan!',
                 'menyoroti' => 'true',
                 'rating_bintang' => 5,
             ],
             [
                 'id_pengguna' => 6,
-                'id_service' => 2, // Service kedua untuk pengguna 6
-                'isi_testimoni' => 'Tune up racing yang luar biasa! Performa motor saya meningkat drastis. Tim mekanik sangat ahli dalam hal racing dan tuning. Hasilnya melebihi ekspektasi saya. Terima kasih MMS!',
+                'id_service' => 10, // Service kedua untuk pengguna 6
+                'isi_testimoni' => 'Service daily yang luar biasa! Performa motor saya meningkat drastis. Tim mekanik sangat ahli dan profesional. Hasilnya melebihi ekspektasi saya. Terima kasih MMS!',
                 'menyoroti' => 'true',
                 'rating_bintang' => 5,
             ],
             [
                 'id_pengguna' => 3,
-                'id_service' => 5, // Service untuk pengguna 3
+                'id_service' => 13, // Service untuk pengguna 3
                 'isi_testimoni' => 'Service rutin yang sangat baik. Motor saya yang tadinya bergetar saat idle sekarang sudah normal kembali. Mekanik ramah dan menjelaskan setiap langkah service dengan detail. Sangat puas!',
                 'menyoroti' => 'false',
                 'rating_bintang' => 4,
             ],
             [
                 'id_pengguna' => 3,
-                'id_service' => 6, // Service racing untuk pengguna 3
-                'isi_testimoni' => 'Tune up untuk balapan weekend berhasil dengan sempurna! Motor saya sekarang siap untuk track day. Tim MMS sangat profesional dan memahami kebutuhan racing. Hasil tune up sangat optimal!',
+                'id_service' => 14, // Service untuk pengguna 3
+                'isi_testimoni' => 'Service rutin untuk performa optimal berhasil dengan sempurna! Motor saya sekarang berjalan dengan lancar. Tim MMS sangat profesional dan memahami kebutuhan customer. Hasil service sangat optimal!',
                 'menyoroti' => 'true',
                 'rating_bintang' => 5,
             ],
@@ -77,20 +77,10 @@ class TestimoniSeeder extends Seeder
     private function getTestimoniData($idTipeService)
     {
         $testimoniData = [
-            1 => [ // daily service
+            1 => [ // Daily service
                 'isi_testimoni' => 'Service harian yang sangat memuaskan. Mekanik sangat teliti dalam pemeriksaan dan perbaikan. Motor saya sekarang berjalan dengan lancar dan efisien. Harga sangat terjangkau untuk kualitas service yang diberikan.',
-                'menyoroti' => 'false',
-                'rating_bintang' => 4,
-            ],
-            2 => [ // racing1 service
-                'isi_testimoni' => 'Tune up racing yang luar biasa! Performa motor saya meningkat signifikan. Tim mekanik sangat ahli dalam hal racing dan tuning. Hasilnya melebihi ekspektasi saya. Sangat direkomendasikan untuk pecinta racing!',
                 'menyoroti' => 'true',
                 'rating_bintang' => 5,
-            ],
-            3 => [ // racing2 service
-                'isi_testimoni' => 'Service racing level 2 yang sangat profesional. Ganti oli dan filter dilakukan dengan sempurna. Sistem pendingin juga dicek dengan teliti. Motor saya sekarang siap untuk performa maksimal.',
-                'menyoroti' => 'false',
-                'rating_bintang' => 4,
             ],
         ];
 

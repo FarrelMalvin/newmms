@@ -39,10 +39,16 @@
                 </a>
             </nav>
             
-            <div class="logout-section">
-                <a href="/logout" class="logout-btn">
-                    <span>Log Out</span>
+            <div class="admin-actions-section" style="margin-top: auto; padding: 1rem;">
+                <a href="/admin/reset-password" class="reset-password-btn" style="display: flex; align-items: center; gap: 0.5rem; color: #FE8400; text-decoration: none; width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: background 0.2s; background: rgba(254, 132, 0, 0.1); margin-bottom: 0.5rem;">
+                    <span>🔐 Reset Password</span>
                 </a>
+            </div>
+            
+            <div class="logout-section">
+                <button onclick="performLogout()" class="logout-btn" style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; color: inherit; text-decoration: none; width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; transition: background 0.2s;">
+                    <span>Log Out</span>
+                </button>
             </div>
         </div>
 
@@ -110,7 +116,6 @@
                         <select name="filterCategory" id="filterCategory" class="filter-select">
                             <option value="">All Categories</option>
                             <option value="Daily">Daily</option>
-                            <option value="Racing">Racing</option>
                         </select>
                     </div>
                 </div>
@@ -196,7 +201,7 @@
                                                 🔄 In Progress
                                                 @if($service->started_at)
                                                     <br><small>Started: {{ \Carbon\Carbon::parse($service->started_at)->format('H:i:s') }}</small>
-                                                    <br><small class="timer-display" style="color: orange;">Auto-complete in 10s</small>
+                                                    <br><div class="timer-display">Auto-complete in 02:00:00</div>
                                                 @endif
                                             </div>
                                             <div><button onclick="cancelService({{ $service->id_service }}, {{ $service->id_pengguna }})" class="action-btn cancel">❌ Cancel</button></div>
@@ -240,8 +245,166 @@
         </div>
     </div>
 
+    <!-- SweetAlert2 for better alerts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        /* Custom Alert Styles */
+        .custom-alert {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 2rem;
+            z-index: 10000;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            border: 2px solid #FE8400;
+        }
+        
+        .custom-alert.success {
+            border-color: #28a745;
+        }
+        
+        .custom-alert.error {
+            border-color: #dc3545;
+        }
+        
+        .custom-alert.warning {
+            border-color: #ffc107;
+        }
+        
+        .custom-alert .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .custom-alert .title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .custom-alert .message {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        
+        .custom-alert .btn {
+            background: #FE8400;
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .custom-alert .btn:hover {
+            background: #e67300;
+        }
+        
+        .custom-alert .btn.error {
+            background: #dc3545;
+        }
+        
+        .custom-alert .btn.error:hover {
+            background: #c82333;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+        }
+        
+        /* Timer Styles */
+        .timer-display {
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            background: rgba(254, 132, 0, 0.1);
+            color: #FE8400;
+            display: inline-block;
+            margin-top: 0.25rem;
+        }
+        
+        .timer-display.warning {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+        
+        .timer-display.danger {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+        
+        /* Status Text Styles */
+        .status-text.processing {
+            background: rgba(254, 132, 0, 0.1);
+            color: #FE8400;
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+            text-align: center;
+            border: 1px solid rgba(254, 132, 0, 0.2);
+        }
+        
+        .status-text.processing small {
+            display: block;
+            margin-top: 0.25rem;
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+    </style>
+    
     <script>
-        const csrfToken =  document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        
+        // Custom Alert Function
+        function showCustomAlert(type, title, message, callback = null) {
+            const overlay = document.createElement('div');
+            overlay.className = 'overlay';
+            
+            const alert = document.createElement('div');
+            alert.className = `custom-alert ${type}`;
+            
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+            
+            alert.innerHTML = `
+                <div class="icon">${icon}</div>
+                <div class="title">${title}</div>
+                <div class="message">${message}</div>
+                <button class="btn ${type === 'error' ? 'error' : ''}" onclick="closeCustomAlert()">OK</button>
+            `;
+            
+            document.body.appendChild(overlay);
+            document.body.appendChild(alert);
+            
+            if (callback) {
+                setTimeout(callback, 2000);
+            }
+        }
+        
+        function closeCustomAlert() {
+            const overlay = document.querySelector('.overlay');
+            const alert = document.querySelector('.custom-alert');
+            if (overlay) overlay.remove();
+            if (alert) alert.remove();
+        }
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchProduk');
             const filterStatus = document.getElementById('filterStatus');
@@ -284,6 +447,9 @@
             }
         });
         function startService(serviceId) {
+            // Show loading state
+            showCustomAlert('warning', 'Starting Service', 'Please wait while we start the service...');
+            
             fetch(`/admin/api/service/start/${serviceId}`, {
                 method: 'POST',
                 headers: {
@@ -293,40 +459,53 @@
             })
             .then(response => response.json())
             .then(data => {
+                closeCustomAlert();
                 if (data.success) {
-                    alert(data.message);
-                    location.reload();
+                    showCustomAlert('success', 'Service Started', data.message, () => {
+                        location.reload();
+                    });
                 } else if (data.error) {
-                    alert('Error: ' + data.error);
+                    showCustomAlert('error', 'Error', data.error);
                 }
             })
             .catch(error => {
+                closeCustomAlert();
                 console.error('Error:', error);
-                alert('Error starting service');
+                showCustomAlert('error', 'Error', 'Failed to start service. Please try again.');
             });
         }
 
         function cancelService(serviceId, userId) {
+            // Show custom confirmation dialog
+            const confirmCancel = confirm('Are you sure you want to cancel this service?');
+            if (!confirmCancel) {
+                return;
+            }
+            
+            showCustomAlert('warning', 'Cancelling Service', 'Please wait while we cancel the service...');
+            
             fetch(`/admin/api/service/cancel/${serviceId}/user/${userId}`, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken,
                     'Content-Type': 'application/json',
-                    
                 },
             })
             .then(response => response.json())
             .then(data => {
+                closeCustomAlert();
                 if (data.success) {
-                    alert(data.message);
-                    location.reload();
+                    showCustomAlert('success', 'Service Cancelled', data.message, () => {
+                        location.reload();
+                    });
                 } else if (data.error) {
-                    alert('Error: ' + data.error);
+                    showCustomAlert('error', 'Error', data.error);
                 }
             })
             .catch(error => {
+                closeCustomAlert();
                 console.error('Error:', error);
-                alert('Error canceling service');
+                showCustomAlert('error', 'Error', 'Failed to cancel service. Please try again.');
             });
         }
 
@@ -340,8 +519,8 @@
                     const startTime = new Date(startedAt);
                     const now = new Date();
                     const elapsed = now - startTime;
-                    const tenSeconds = 10 * 1000; // 10 seconds in milliseconds
-                    const remaining = tenSeconds - elapsed;
+                    const twoHours = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
+                    const remaining = twoHours - elapsed;
                     
                     const timerElement = serviceRow.querySelector('.timer-display');
                     
@@ -352,16 +531,29 @@
                         const seconds = totalSeconds % 60;
 
                         const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
                         
                         if (timerElement) {
+                            // Update timer text and styling based on remaining time
                             timerElement.textContent = `Auto-complete in ${formattedTime}`;
+                            
+                            // Change color based on remaining time
+                            if (remaining < 30 * 60 * 1000) { // Less than 30 minutes
+                                timerElement.className = 'timer-display danger';
+                            } else if (remaining < 60 * 60 * 1000) { // Less than 1 hour
+                                timerElement.className = 'timer-display warning';
+                            } else {
+                                timerElement.className = 'timer-display';
+                            }
                         }
                     } else {
                         if (timerElement) {
                             timerElement.textContent = 'Completing...';
+                            timerElement.className = 'timer-display danger';
                         }
-                        setTimeout(() => location.reload(), 2000);
+                        // Show completion alert
+                        showCustomAlert('success', 'Service Completed', 'Service has been automatically completed!', () => {
+                            location.reload();
+                        });
                     }
                 }
             });
@@ -411,6 +603,22 @@
             updateServiceTimers();
             setInterval(updateServiceTimers, 1000);
         });
+
+        // Logout function
+        function performLogout() {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ route("logout") }}';
+            
+            const csrfToken = document.createElement('input');
+            csrfToken.type = 'hidden';
+            csrfToken.name = '_token';
+            csrfToken.value = '{{ csrf_token() }}';
+            
+            form.appendChild(csrfToken);
+            document.body.appendChild(form);
+            form.submit();
+        }
     </script>
 </body>
 </html>

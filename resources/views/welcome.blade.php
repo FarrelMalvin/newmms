@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         :root {
@@ -797,6 +799,13 @@
             .help-title-custom {
                 font-size: 2rem;
             }
+
+            /* Tablet button adjustments */
+            .btn-login, .btn-register {
+                padding: 0.45rem 1.2rem;
+                font-size: 0.9rem;
+                border-radius: 0.45rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -829,6 +838,13 @@
 
             .mobile-menu-content {
                 width: 280px;
+            }
+
+            /* Mobile button adjustments */
+            .btn-login, .btn-register {
+                padding: 0.4rem 1rem;
+                font-size: 0.85rem;
+                border-radius: 0.4rem;
             }
         }
         @media (max-width: 640px) {
@@ -1314,12 +1330,23 @@
                 <a href="#testimonial">Testimonial</a>
                 <a href="/customer/dashboard">Customer Dashboard</a>
             </nav>
+            @if(Auth::check())
+            <div class="mobile-auth-buttons" style="margin-top: 1.5rem;">
+                <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                    @csrf
+                    <button type="submit" class="btn-login" style="width: 100%; background: #dc3545; border-color: #dc3545; color: white;">Logout</button>
+                </form>
+            </div>
+            @else
             <div class="mobile-auth-buttons">
                 <a href="/login" class="btn-login">Login</a>
                 <a href="/signup" class="btn-register">Register</a>
             </div>
+            @endif
         </div>
     </div>
+
+
 
     <div class="hero">
         <div class="hero-left">
@@ -1329,7 +1356,7 @@
             <div class="hero-desc">
                 <h2>Mifta Motor Sport offers everything your ride needs, in one place.</h2>
             </div>
-            <button class="hero-btn">Book Now</button>
+            <button class="hero-btn" onclick="document.getElementById('appointment').scrollIntoView({behavior: 'smooth', block: 'start'}); return false;">Book Now</button>
         </div>
         <div class="hero-right">    
          <img src="/images/tampilan1.png" alt="Hero Image">
@@ -1450,11 +1477,7 @@
             @foreach($news->take(3) as $item)
             <div class="news-card-custom">
                 <div class="news-image-custom">
-                    @if($item->foto)
-                        <img src="{{ asset('storage/' . $item->foto) }}" alt="{{ $item->judul_berita }}">
-                    @else
-                        <img src="https://via.placeholder.com/400x220/FE8400/FFFFFF?text=No+Image" alt="No Image">
-                    @endif
+                    <img src="{{ $item->foto ? asset('storage/') . '/' . str_replace('storage/', '', $item->foto) : 'https://via.placeholder.com/400x220/FE8400/FFFFFF?text=No+Image' }}" alt="{{ $item->judul_berita }}">
                 </div>
                 <div class="news-content-custom">
                     <div class="news-title-custom">{{ $item->judul_berita }}</div>
@@ -1585,7 +1608,7 @@
                 @foreach($products->take(3) as $product)
                 <div class="product-card-custom">
                     <div class="product-image-custom">
-                        <img src="{{ asset('storage/' . $product->gambar_produk) }}" alt="{{ $product->nama_produk }}">
+                                                        <img src="{{ $product->gambar_produk ? asset('storage/') . '/' . str_replace('storage/', '', $product->gambar_produk) : \App\Helpers\ImageHelper::getProductAvatar($product->nama_produk, 200) }}" alt="{{ $product->nama_produk }}" onerror="this.src='{{ \App\Helpers\ImageHelper::getProductAvatar($product->nama_produk, 200) }}'">
                     </div>
                     <div class="product-content-custom">
                         <div class="product-title-custom">{{ $product->nama_produk }}</div>
@@ -1599,11 +1622,8 @@
                 </div>
                 @endforeach
             @else
-                <div class="collection-card">
-                    <div class="info">
-                        <h4>No products available</h4>
-                        <p>Check back later for more products.</p>
-                    </div>
+                <div style="display:flex;justify-content:center;align-items:center;height:400px;width:100%;">
+                    <img src="/images/logo2.png" alt="No products" style="width:90px;height:90px;opacity:0.5;object-fit:contain;" />
                 </div>
             @endif
         </div>
@@ -1633,7 +1653,7 @@
                 if (!expanded) {
                     collections.innerHTML = `@foreach($products as $product)` +
                         `<div class=\"product-card-custom\">` +
-                        `<div class=\"product-image-custom\"><img src=\"{{ asset('storage/' . $product->gambar_produk) }}\" alt=\"{{ $product->nama_produk }}\"></div>` +
+                        `<div class=\"product-image-custom\"><img src=\"{{ $product->gambar_produk ? asset('storage/' . str_replace('storage/', '', $product->gambar_produk)) : \App\Helpers\ImageHelper::getProductAvatar($product->nama_produk, 200) }}\" alt=\"{{ $product->nama_produk }}\" onerror=\"this.src='{{ \App\Helpers\ImageHelper::getProductAvatar($product->nama_produk, 200) }}'\"></div>` +
                         `<div class=\"product-content-custom\">` +
                         `<div class=\"product-title-custom\">{{ $product->nama_produk }}</div>` +
                         `<div class=\"product-category-custom\"><span class=\"product-icon-custom\">🔧</span>{{ $product->kategori ?? 'Sparepart' }}</div>` +
@@ -1681,17 +1701,8 @@
                     </div>
                     @endforeach
                 @else
-                    <div class="testimonial-card-custom">
-                        <div class="testimonial-avatar">N</div>
-                        <h4 style="font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 600; color: #141414; margin-bottom: 0.5rem;">No testimonials yet</h4>
-                        <p style="font-size: 1rem; color: #575757; text-align: center;">"Excellent service! My bike runs perfectly now."</p>
-                        <div class="testimonial-rating" style="display:flex;justify-content:center;gap:0.25rem;margin-top:0.5rem;">
-                            <span class="star" style="color:#FFD700;font-size:1.2rem;">★</span>
-                            <span class="star" style="color:#FFD700;font-size:1.2rem;">★</span>
-                            <span class="star" style="color:#FFD700;font-size:1.2rem;">★</span>
-                            <span class="star" style="color:#FFD700;font-size:1.2rem;">★</span>
-                            <span class="star" style="color:#FFD700;font-size:1.2rem;">★</span>
-                        </div>
+                    <div style="display:flex;justify-content:center;align-items:center;height:300px;width:100%;">
+                        <img src="/images/logo2.png" alt="No testimonials" style="width:64px;height:64px;opacity:0.5;object-fit:contain;" />
                     </div>
                 @endif
             </div>
@@ -1881,5 +1892,38 @@
     cabangInput.addEventListener('change', updateSlot);
     });
     </script>
+
+    <!-- SweetAlert2 Error Handling -->
+    @if ($errors->any())
+    <script>
+        window.onload = function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                html: `{!! implode('<br>', $errors->all()) !!}`,
+                confirmButtonText: 'OK',
+                customClass: {
+                    confirmButton: 'swal-ok-button'
+                }
+            });
+        }
+    </script>
+    @endif
+
+    <style>
+    .swal-ok-button {
+        background-color: #FE8400 !important;
+        color: white !important;
+        font-weight: 600;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .swal-ok-button:hover {
+        background-color: #e67300 !important; /* versi gelap saat hover */
+    }
+    </style>
 </body>
 </html>

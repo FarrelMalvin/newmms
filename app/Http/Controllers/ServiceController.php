@@ -37,18 +37,22 @@ class ServiceController extends Controller
         $slots = ["09:00", "11:00", "13:00", "15:00"];
         $availableSlots = [];
 
+        // Optimasi: Ambil semua data service untuk tanggal dan cabang tertentu dalam 1 query
+        $existingBookings = DB::table('service')
+            ->whereDate('tanggal', $bookingDate->toDateString())
+            ->where('id_cabang', $id_cabang)
+            ->whereIn('status', ['pend', 'done'])
+            ->select('jadwal')
+            ->get()
+            ->pluck('jadwal')
+            ->toArray();
+
         foreach ($slots as $slot) {
             $slotDateTime = Carbon::parse($date . ' ' . $slot);
             $isPast = $slotDateTime->lt($now);
 
-            $count = DB::table('service')
-                ->whereDate('tanggal', $slotDateTime->toDateString())
-                ->where('jadwal', $slot)
-                ->where('id_cabang', $id_cabang)
-                ->whereIn('status', ['pend', 'done'])
-                ->count();
-        
-            $slotFull = $count >= 1;
+            // Optimasi: Cek dari array yang sudah di-load, bukan query lagi
+            $slotFull = in_array($slot, $existingBookings);
         
             $slotData = [
                 'time' => $slot,
@@ -79,6 +83,15 @@ class ServiceController extends Controller
             'tanggal' => 'required|date',
             'keluhan' => 'nullable|string',
             'jadwal' => 'required|date_format:H:i',
+        ], [
+            'id_tipe_service.required' => 'Service type is required.',
+            'id_tipe_service.integer' => 'Service type must be a valid selection.',
+            'id_cabang.required' => 'Branch is required.',
+            'id_cabang.integer' => 'Branch must be a valid selection.',
+            'tanggal.required' => 'Date is required.',
+            'tanggal.date' => 'Date must be a valid date.',
+            'jadwal.required' => 'Schedule is required.',
+            'jadwal.date_format' => 'Schedule must be in valid time format.',
         ]);
 
         // Ambil id_pengguna dari Auth
@@ -91,7 +104,7 @@ class ServiceController extends Controller
             if ($type) {
                 $idTipeService = $type->id_tipe_service;
             } else {
-                return redirect()->back()->withErrors(['id_tipe_service' => 'Tipe service tidak valid.'])->withInput();
+                return redirect()->back()->withErrors(['id_tipe_service' => 'Invalid service type.'])->withInput();
             }
         }
 
@@ -102,7 +115,7 @@ class ServiceController extends Controller
 
         if ($existing) {
             return redirect()->back()
-                ->withErrors(['tanggal' => 'Kamu sudah melakukan booking di tanggal tersebut.'])
+                ->withErrors(['tanggal' => 'You already have a booking on this date.'])
                 ->withInput();
         }
 
@@ -124,14 +137,22 @@ class ServiceController extends Controller
 
     public function getServiceTypes()
     {
-        $types = TypeService::all();
-        return response()->json($types);
+        // Optimasi: Tambah cache untuk data statis
+        return response()->json(
+            cache()->remember('service_types', 3600, function() {
+                return TypeService::all();
+            })
+        );
     }
 
     public function getServiceCabang()
     {
-        $cabangs = Cabang::all();
-        return response()->json($cabangs);
+        // Optimasi: Tambah cache untuk data statis
+        return response()->json(
+            cache()->remember('service_cabang', 3600, function() {
+                return Cabang::all();
+            })
+        );
     }
 
     public function indexByUser()
@@ -248,7 +269,7 @@ class ServiceController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Service started successfully. Will auto-complete in 5 seconds.'
+            'message' => 'Service started successfully. Will auto-complete in 2 hours.'
         ]);
     } catch (Exception $e) {
         return response()->json(['error' => 'Error starting service'], 500);

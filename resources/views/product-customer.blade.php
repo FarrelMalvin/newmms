@@ -26,11 +26,15 @@
             <a href="#" class="header-link" onclick="openTestimoniModal(); return false;">Testimonial</a>
         </nav>
         <div class="header-user" id="headerUser">
-            <span class="header-username">{{ Auth::user()->nama }}</span>
-            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->nama) }}&background=eeeeee&color=141414&size=128" alt="Profile" class="header-profile">
-            <div class="dropdown-menu" id="dropdownMenu" style="display:none;">
-                <button onclick="performLogout()" class="dropdown-item" style="background:none;border:none;padding:0.7em 1.2em;width:100%;text-align:left;cursor:pointer;color:#333;">Logout</button>
-            </div>
+            @auth
+                <span class="header-username">{{ Auth::user()->nama }}</span>
+                <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->nama) }}&background=eeeeee&color=141414&size=128" alt="Profile" class="header-profile">
+                <div class="dropdown-menu" id="dropdownMenu" style="display:none;">
+                    <button onclick="performLogout()" class="dropdown-item" style="background:none;border:none;padding:0.7em 1.2em;width:100%;text-align:left;cursor:pointer;color:#333;">Logout</button>
+                </div>
+            @else
+                <a href="/login" class="header-link" style="text-decoration:none;color:#FE8400;font-weight:600;">Login</a>
+            @endauth
         </div>
     </header>
     <div class="hero-section">
@@ -55,8 +59,8 @@
         <!-- Product Card Grid -->
         <div class="product-card-grid" id="productCardGrid">
             @forelse($produk as $item)
-                <div class="product-card" data-kategori="{{ strtolower(str_replace(' ', '-', $item->kategori)) }}">
-                    <img src="{{ $item->gambar_produk ? asset($item->gambar_produk) : 'https://ui-avatars.com/api/?name=' . urlencode($item->nama_produk) . '&background=eeeeee&color=141414&size=200' }}" alt="{{ $item->nama_produk }}" class="product-image">
+                <div class="product-card" data-kategori="{{ strtolower($item->kategori) }}">
+                    <img src="{{ $item->gambar_produk ? asset('storage/') . '/' . str_replace('storage/', '', $item->gambar_produk) : \App\Helpers\ImageHelper::getProductAvatar($item->nama_produk, 200) }}" alt="{{ $item->nama_produk }}" class="product-image" onerror="this.src='{{ \App\Helpers\ImageHelper::getProductAvatar($item->nama_produk, 200) }}'">
                     <div class="product-info">
                         <div class="product-title">{{ $item->nama_produk }}</div>
                         <div class="product-category">{{ $item->kategori }}</div>
@@ -99,6 +103,7 @@
         // Toggle dropdown on click user/profile
         const headerUser = document.getElementById('headerUser');
         const dropdownMenu = document.getElementById('dropdownMenu');
+        @auth
         headerUser.addEventListener('click', function(e) {
             e.stopPropagation();
             dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
@@ -107,14 +112,15 @@
         document.addEventListener('click', function() {
             dropdownMenu.style.display = 'none';
         });
+        @endauth
 
         // Interaktif kategori: multi-select (bisa centang semua, minimal satu harus aktif)
         const rectangles = document.querySelectorAll('.category-rectangle');
         const productCards = document.querySelectorAll('.product-card[data-kategori]');
         const kategoriMap = [
             {id: 'cat-1', kategori: 'oil'},
-            {id: 'cat-2', kategori: 'second-part'},
-            {id: 'cat-3', kategori: 'new-part'},
+            {id: 'cat-2', kategori: 'second part'},
+            {id: 'cat-3', kategori: 'new part'},
             {id: 'cat-4', kategori: 'apparel'}
         ];
         rectangles.forEach((rect, idx) => {
@@ -158,6 +164,7 @@
 
         // Logout function
         function performLogout() {
+            @auth
             // Create a form dynamically
             var form = document.createElement('form');
             form.method = 'POST';
@@ -173,6 +180,9 @@
             // Submit the form
             document.body.appendChild(form);
             form.submit();
+            @else
+            window.location.href = '/login';
+            @endauth
         }
         // Star rating interaction
         document.addEventListener('DOMContentLoaded', function() {
